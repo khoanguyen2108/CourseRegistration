@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "CourseRegistrationServer\\CourseRegistrationServer.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "CourseRegistrationClient\\CourseRegistrationClient.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

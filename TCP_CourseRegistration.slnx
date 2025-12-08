@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CourseRegistrationClient/CourseRegistrationClient.csproj" />
+  <Project Path="CourseRegistrationServer/CourseRegistrationServer.csproj" />
+</Solution>

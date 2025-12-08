@@ -1,0 +1,10 @@
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\CourseRegistrationServer.exe.config
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\CourseRegistrationServer.exe
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\CourseRegistrationServer.pdb
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\Newtonsoft.Json.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\Newtonsoft.Json.xml
+D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationServer.csproj.AssemblyReference.cache
+D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationServer.csproj.CoreCompileInputs.cache
+D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRe.4FB3F8FA.Up2Date
+D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationServer.exe
+D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationServer.pdb
