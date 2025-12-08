@@ -88,7 +88,6 @@ namespace CourseRegistrationServer
                             Console.WriteLine($"[SERVER] Nhận yêu cầu: {request}");
                             string response = ProcessRequest(request);
 
-                            // Debug: In ra response
                             Console.WriteLine($"[SERVER] Response: {response.Substring(0, Math.Min(100, response.Length))}...");
 
                             writer.WriteLine(response);
@@ -138,6 +137,25 @@ namespace CourseRegistrationServer
 
                         string viewStudentId = parts[1].Trim();
                         return ViewRegistrations(viewStudentId);
+
+                    // ⭐⭐⭐ THÊM 2 CASE MỚI NÀY ⭐⭐⭐
+                    case "ADD_COURSE":
+                        if (parts.Length < 5)
+                            return "ERROR|Định dạng sai";
+
+                        string addCourseId = parts[1].Trim();
+                        string addCourseName = parts[2].Trim();
+                        int addCredits = int.Parse(parts[3].Trim());
+                        int addSlots = int.Parse(parts[4].Trim());
+                        return AddCourse(addCourseId, addCourseName, addCredits, addSlots);
+
+                    case "DELETE_COURSE":
+                        if (parts.Length < 2)
+                            return "ERROR|Định dạng sai";
+
+                        string deleteCourseId = parts[1].Trim();
+                        return DeleteCourse(deleteCourseId);
+                    // ⭐⭐⭐ KẾT THÚC THÊM ⭐⭐⭐
 
                     default:
                         return "ERROR|Lệnh không tồn tại: " + command;
@@ -202,6 +220,53 @@ namespace CourseRegistrationServer
                 return "SUCCESS|" + json;
             }
         }
+
+        // ⭐⭐⭐ THÊM 2 HÀM MỚI NÀY ⭐⭐⭐
+        private string AddCourse(string courseId, string courseName, int credits, int availableSlots)
+        {
+            lock (lockObject)
+            {
+                Console.WriteLine($"[SERVER] ADD_COURSE: {courseId}, {courseName}, {credits}, {availableSlots}");
+
+                // Kiểm tra mã môn đã tồn tại chưa
+                if (courses.Any(c => c.CourseId == courseId))
+                {
+                    Console.WriteLine($"[ERROR] Mã môn {courseId} đã tồn tại");
+                    return "ERROR|Mã môn này đã tồn tại";
+                }
+
+                // Thêm môn mới
+                Course newCourse = new Course(courseId, courseName, credits, availableSlots);
+                courses.Add(newCourse);
+
+                Console.WriteLine($"[SERVER] ✅ Đã thêm môn: {courseId}");
+                return "SUCCESS|Thêm môn thành công! ";
+            }
+        }
+
+        private string DeleteCourse(string courseId)
+        {
+            lock (lockObject)
+            {
+                Console.WriteLine($"[SERVER] DELETE_COURSE: {courseId}");
+
+                // Tìm môn học
+                Course courseToDelete = courses.FirstOrDefault(c => c.CourseId == courseId);
+
+                if (courseToDelete == null)
+                {
+                    Console.WriteLine($"[ERROR] Không tìm thấy môn {courseId}");
+                    return "ERROR|Không tìm thấy môn học";
+                }
+
+                // Xóa môn
+                courses.Remove(courseToDelete);
+
+                Console.WriteLine($"[SERVER] ✅ Đã xóa môn: {courseId}");
+                return "SUCCESS|Xóa môn thành công!";
+            }
+        }
+        // ⭐⭐⭐ KẾT THÚC THÊM ⭐⭐⭐
 
         public void Stop()
         {

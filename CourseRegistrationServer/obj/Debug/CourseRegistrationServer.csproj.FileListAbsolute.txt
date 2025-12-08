@@ -8,3 +8,16 @@ D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationS
 D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRe.4FB3F8FA.Up2Date
 D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationServer.exe
 D:\TCP_CourseRegistration\CourseRegistrationServer\obj\Debug\CourseRegistrationServer.pdb
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\Microsoft.Data.Sqlite.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\SQLitePCLRaw.batteries_v2.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\SQLitePCLRaw.core.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\SQLitePCLRaw.provider.dynamic_cdecl.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Buffers.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Memory.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Numerics.Vectors.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\Microsoft.Data.Sqlite.xml
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Buffers.xml
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Memory.xml
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Numerics.Vectors.xml
+D:\TCP_CourseRegistration\CourseRegistrationServer\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml

@@ -102,5 +102,66 @@ namespace CourseRegistrationClient
         {
             clientSocket.Disconnect();
         }
+
+        // ⭐⭐⭐ THÊM 3 HÀM MỚI NÀY ⭐⭐⭐
+
+        private void btnAddCourse_Click(object sender, EventArgs e)
+        {
+            string courseId = InputBox("Mã Môn:", "Thêm Môn Học");
+            if (string.IsNullOrEmpty(courseId)) return;
+
+            string courseName = InputBox("Tên Môn:", "Thêm Môn Học");
+            if (string.IsNullOrEmpty(courseName)) return;
+
+            if (!int.TryParse(InputBox("Số Tín Chỉ:", "Thêm Môn Học"), out int credits))
+            {
+                MessageBox.Show("Số tín chỉ phải là số!", "Lỗi");
+                return;
+            }
+
+            if (!int.TryParse(InputBox("Số Chỗ Còn:", "Thêm Môn Học"), out int slots))
+            {
+                MessageBox.Show("Số chỗ phải là số!", "Lỗi");
+                return;
+            }
+
+            string response = clientSocket.AddCourse(courseId, courseName, credits, slots);
+            DisplayResponse(response, "thêm môn");
+        }
+
+        private void btnDeleteCourse_Click(object sender, EventArgs e)
+        {
+            string courseId = InputBox("Nhập Mã Môn Cần Xóa:", "Xóa Môn Học");
+            if (string.IsNullOrEmpty(courseId)) return;
+
+            string response = clientSocket.DeleteCourse(courseId);
+            DisplayResponse(response, "xóa môn");
+        }
+
+        private string InputBox(string prompt, string title)
+        {
+            Form form = new Form();
+            form.Text = title;
+            form.Width = 350;
+            form.Height = 150;
+            form.StartPosition = FormStartPosition.CenterParent;
+            form.ShowInTaskbar = false;
+
+            Label label = new Label() { Left = 20, Top = 20, Text = prompt, Width = 310 };
+            TextBox textBox = new TextBox() { Left = 20, Top = 50, Width = 310 };
+            Button okButton = new Button() { Text = "OK", Left = 150, Width = 80, Top = 80, DialogResult = DialogResult.OK };
+            Button cancelButton = new Button() { Text = "Cancel", Left = 240, Width = 80, Top = 80, DialogResult = DialogResult.Cancel };
+
+            form.Controls.Add(label);
+            form.Controls.Add(textBox);
+            form.Controls.Add(okButton);
+            form.Controls.Add(cancelButton);
+            form.AcceptButton = okButton;
+            form.CancelButton = cancelButton;
+
+            return form.ShowDialog() == DialogResult.OK ? textBox.Text : null;
+        }
+
+        // ⭐⭐⭐ KẾT THÚC THÊM ⭐⭐⭐
     }
 }

@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="CourseRegistrationClient/CourseRegistrationClient.csproj" />
-  <Project Path="CourseRegistrationServer/CourseRegistrationServer.csproj" />
+  <Project Path="CourseRegistrationClient/CourseRegistrationClient.csproj" Id="22dae89f-fff3-4935-912d-0bdd010eee5a" />
+  <Project Path="CourseRegistrationServer/CourseRegistrationServer.csproj" Id="756d04cd-1c3f-4d04-9513-feb0d7bf9b56" />
 </Solution>

@@ -69,6 +69,20 @@ namespace CourseRegistrationClient
             return SendRequest($"VIEW_REGISTRATIONS|{studentId}");
         }
 
+        // ⭐⭐⭐ THÊM 2 HÀM NÀY ⭐⭐⭐
+        // Thêm môn học
+        public string AddCourse(string courseId, string courseName, int credits, int availableSlots)
+        {
+            return SendRequest($"ADD_COURSE|{courseId}|{courseName}|{credits}|{availableSlots}");
+        }
+
+        // Xóa môn học
+        public string DeleteCourse(string courseId)
+        {
+            return SendRequest($"DELETE_COURSE|{courseId}");
+        }
+        // ⭐⭐⭐ KẾT THÚC ⭐⭐⭐
+
         public void Disconnect()
         {
             try

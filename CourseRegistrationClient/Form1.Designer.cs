@@ -24,6 +24,10 @@
             this.btnRegister = new System.Windows.Forms.Button();
             this.btnViewRegistrations = new System.Windows.Forms.Button();
             this.txtResult = new System.Windows.Forms.RichTextBox();
+            // ⭐⭐⭐ THÊM 2 NÚT MỚI ⭐⭐⭐
+            this.btnAddCourse = new System.Windows.Forms.Button();
+            this.btnDeleteCourse = new System.Windows.Forms.Button();
+            // ⭐⭐⭐ KẾT THÚC THÊM ⭐⭐⭐
             this.SuspendLayout();
 
             // label1
@@ -104,10 +108,38 @@
             this.txtResult.TabIndex = 8;
             this.txtResult.Text = "";
 
+            // ⭐⭐⭐ THÊM 2 NÚT MỚI TẠI ĐÂY ⭐⭐⭐
+            // btnAddCourse
+            this.btnAddCourse.BackColor = System.Drawing.Color.LimeGreen;
+            this.btnAddCourse.ForeColor = System.Drawing.Color.White;
+            this.btnAddCourse.Location = new System.Drawing.Point(12, 410);
+            this.btnAddCourse.Name = "btnAddCourse";
+            this.btnAddCourse.Size = new System.Drawing.Size(100, 30);
+            this.btnAddCourse.TabIndex = 9;
+            this.btnAddCourse.Text = "Thêm Môn";
+            this.btnAddCourse.UseVisualStyleBackColor = false;
+            this.btnAddCourse.Click += new System.EventHandler(this.btnAddCourse_Click);
+
+            // btnDeleteCourse
+            this.btnDeleteCourse.BackColor = System.Drawing.Color.Red;
+            this.btnDeleteCourse.ForeColor = System.Drawing.Color.White;
+            this.btnDeleteCourse.Location = new System.Drawing.Point(120, 410);
+            this.btnDeleteCourse.Name = "btnDeleteCourse";
+            this.btnDeleteCourse.Size = new System.Drawing.Size(100, 30);
+            this.btnDeleteCourse.TabIndex = 10;
+            this.btnDeleteCourse.Text = "Xóa Môn";
+            this.btnDeleteCourse.UseVisualStyleBackColor = false;
+            this.btnDeleteCourse.Click += new System.EventHandler(this.btnDeleteCourse_Click);
+
+            // Thêm 2 nút vào form
+            this.Controls.Add(this.btnAddCourse);
+            this.Controls.Add(this.btnDeleteCourse);
+            // ⭐⭐⭐ KẾT THÚC THÊM ⭐⭐⭐
+
             // Form1
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(430, 410);
+            this.ClientSize = new System.Drawing.Size(430, 450);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.btnViewRegistrations);
             this.Controls.Add(this.btnRegister);
@@ -134,5 +166,9 @@
         private System.Windows.Forms.Button btnRegister;
         private System.Windows.Forms.Button btnViewRegistrations;
         private System.Windows.Forms.RichTextBox txtResult;
+        // ⭐⭐⭐ THÊM 2 NƯỚC KHAI BÁO ⭐⭐⭐
+        private System.Windows.Forms.Button btnAddCourse;
+        private System.Windows.Forms.Button btnDeleteCourse;
+        // ⭐⭐⭐ KẾT THÚC ⭐⭐⭐
     }
 }
