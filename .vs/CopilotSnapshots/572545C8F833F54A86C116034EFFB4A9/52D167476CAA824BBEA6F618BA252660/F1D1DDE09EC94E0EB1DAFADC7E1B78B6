@@ -6,9 +6,7 @@ namespace CourseRegistrationServer
     {
         public string StudentId { get; set; }       // Mã sinh viên
         public string CourseId { get; set; }        // Mã môn
-        public string CourseName { get; set; }      // Tên môn (thêm mới)
         public DateTime RegistrationDate { get; set; } // Ngày đăng ký
-        public DateTime RegisteredAt { get; set; }  // Alias cho RegistrationDate
         public string Status { get; set; }          // Trạng thái (Success/Failed)
 
         public Registration() { }
@@ -18,13 +16,12 @@ namespace CourseRegistrationServer
             StudentId = studentId;
             CourseId = courseId;
             RegistrationDate = DateTime.Now;
-            RegisteredAt = DateTime.Now;
             Status = "Pending";
         }
 
         public override string ToString()
         {
-            return $"SV: {StudentId} | Mon: {CourseId} | Ngay: {RegistrationDate:dd/MM/yyyy HH:mm:ss} | Trang thai: {Status}";
+            return $"SV: {StudentId} | Môn: {CourseId} | Ngày: {RegistrationDate:dd/MM/yyyy HH:mm:ss} | Trạng thái: {Status}";
         }
     }
 }

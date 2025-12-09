@@ -233,7 +233,6 @@ namespace CourseRegistrationServer
                     return "ERROR|Bạn đã đăng ký môn này rồi";
 
                 Registration reg = new Registration(studentId, courseId);
-                reg.CourseName = course.CourseName;
                 reg.Status = "Success";
                 registrations.Add(reg);
                 course.AvailableSlots--;

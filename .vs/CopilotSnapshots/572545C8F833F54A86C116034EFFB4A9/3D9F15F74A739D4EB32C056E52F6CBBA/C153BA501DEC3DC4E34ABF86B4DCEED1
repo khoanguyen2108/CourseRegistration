@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Windows.Forms;
 
 namespace CourseRegistrationClient
@@ -14,7 +14,7 @@ namespace CourseRegistrationClient
         {
             InitializeComponent();
             clientSocket = socket;
-            this.Text = "??ng nh?p - H? th?ng ??ng ký Môn h?c";
+            this.Text = "??ng nh?p - H? th?ng ??ng kÃ½ MÃ´n h?c";
         }
 
         private void InitializeComponent()
@@ -23,7 +23,7 @@ namespace CourseRegistrationClient
 
             // Labels
             Label lblUsername = new Label();
-            lblUsername.Text = "Tên ??ng nh?p:";
+            lblUsername.Text = "TÃªn ??ng nh?p:";
             lblUsername.Location = new System.Drawing.Point(20, 30);
             lblUsername.Size = new System.Drawing.Size(100, 20);
             this.Controls.Add(lblUsername);
@@ -57,7 +57,7 @@ namespace CourseRegistrationClient
             this.Controls.Add(btnLogin);
 
             Button btnRegister = new Button();
-            btnRegister.Text = "??ng ký";
+            btnRegister.Text = "??ng kÃ½";
             btnRegister.Location = new System.Drawing.Point(235, 110);
             btnRegister.Size = new System.Drawing.Size(95, 30);
             btnRegister.Click += BtnRegister_Click;
@@ -69,7 +69,7 @@ namespace CourseRegistrationClient
             lblInfo.Location = new System.Drawing.Point(20, 160);
             lblInfo.Size = new System.Drawing.Size(350, 60);
             lblInfo.AutoSize = true;
-            lblInfo.Text = "Tài kho?n demo:\nAdmin: admin / admin123\nSinh viên: student / student123";
+            lblInfo.Text = "TÃ i kho?n demo:\nAdmin: admin / admin123\nSinh viÃªn: student / student123";
             this.Controls.Add(lblInfo);
 
             this.ClientSize = new System.Drawing.Size(380, 230);
@@ -87,7 +87,7 @@ namespace CourseRegistrationClient
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Vui lòng nh?p tên ??ng nh?p và m?t kh?u", "L?i");
+                MessageBox.Show("Vui lÃ²ng nh?p tÃªn ??ng nh?p vÃ  m?t kh?u", "L?i");
                 return;
             }
 
@@ -119,7 +119,7 @@ namespace CourseRegistrationClient
             RegisterForm regForm = new RegisterForm(clientSocket);
             if (regForm.ShowDialog() == DialogResult.OK)
             {
-                MessageBox.Show("??ng ký thành công! Vui lòng ??ng nh?p.", "Thành công");
+                MessageBox.Show("??ng kÃ½ thÃ nh cÃ´ng! Vui lÃ²ng ??ng nh?p.", "ThÃ nh cÃ´ng");
             }
         }
     }

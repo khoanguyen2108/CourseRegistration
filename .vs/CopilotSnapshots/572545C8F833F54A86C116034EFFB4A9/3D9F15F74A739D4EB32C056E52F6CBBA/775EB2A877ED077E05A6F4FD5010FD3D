@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
@@ -19,7 +19,7 @@ namespace CourseRegistrationClient
             fullName = name;
             
             InitializeComponent();
-            this.Text = $"Sinh viên - {fullName} - H? th?ng ??ng ký Môn h?c";
+            this.Text = $"Sinh viÃªn - {fullName} - H? th?ng ??ng kÃ½ MÃ´n h?c";
         }
 
         private void InitializeComponent()
@@ -34,7 +34,7 @@ namespace CourseRegistrationClient
             this.Controls.Add(pnlToolbar);
 
             Label lblWelcome = new Label();
-            lblWelcome.Text = $"Xin chào: {fullName}";
+            lblWelcome.Text = $"Xin chÃ o: {fullName}";
             lblWelcome.Location = new System.Drawing.Point(10, 10);
             lblWelcome.Size = new System.Drawing.Size(200, 20);
             pnlToolbar.Controls.Add(lblWelcome);
@@ -51,13 +51,13 @@ namespace CourseRegistrationClient
             tabControl.Dock = DockStyle.Fill;
             this.Controls.Add(tabControl);
 
-            // Tab 1: Danh sách môn h?c
-            TabPage tabCourses = new TabPage("Danh sách Môn h?c");
+            // Tab 1: Danh sÃ¡ch mÃ´n h?c
+            TabPage tabCourses = new TabPage("Danh sÃ¡ch MÃ´n h?c");
             CreateCoursesTab(tabCourses);
             tabControl.TabPages.Add(tabCourses);
 
-            // Tab 2: Môn ?ã ??ng ký
-            TabPage tabRegistered = new TabPage("Môn ?ã ??ng ký");
+            // Tab 2: MÃ´n ?Ã£ ??ng kÃ½
+            TabPage tabRegistered = new TabPage("MÃ´n ?Ã£ ??ng kÃ½");
             CreateRegisteredTab(tabRegistered);
             tabControl.TabPages.Add(tabRegistered);
 
@@ -82,14 +82,14 @@ namespace CourseRegistrationClient
             tab.Controls.Add(pnlButton);
 
             Button btnRegister = new Button();
-            btnRegister.Text = "??ng ký môn (F5)";
+            btnRegister.Text = "??ng kÃ½ mÃ´n (F5)";
             btnRegister.Location = new System.Drawing.Point(10, 8);
             btnRegister.Size = new System.Drawing.Size(100, 25);
             btnRegister.Click += (s, e) => BtnRegister_Click();
             pnlButton.Controls.Add(btnRegister);
 
             Button btnRefresh = new Button();
-            btnRefresh.Text = "Làm m?i (F9)";
+            btnRefresh.Text = "LÃ m m?i (F9)";
             btnRefresh.Location = new System.Drawing.Point(120, 8);
             btnRefresh.Size = new System.Drawing.Size(100, 25);
             btnRefresh.Click += (s, e) => LoadCoursesData();
@@ -102,9 +102,9 @@ namespace CourseRegistrationClient
             dgvCourses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvCourses.AllowUserToAddRows = false;
 
-            dgvCourses.Columns.Add("CourseId", "Mã môn");
-            dgvCourses.Columns.Add("CourseName", "Tên môn");
-            dgvCourses.Columns.Add("Credits", "Tín ch?");
+            dgvCourses.Columns.Add("CourseId", "MÃ£ mÃ´n");
+            dgvCourses.Columns.Add("CourseName", "TÃªn mÃ´n");
+            dgvCourses.Columns.Add("Credits", "TÃ­n ch?");
             dgvCourses.Columns.Add("AvailableSlots", "Ch? tr?ng");
 
             tab.Controls.Add(dgvCourses);
@@ -120,7 +120,7 @@ namespace CourseRegistrationClient
             tab.Controls.Add(pnlButton);
 
             Button btnRefresh = new Button();
-            btnRefresh.Text = "Làm m?i (F9)";
+            btnRefresh.Text = "LÃ m m?i (F9)";
             btnRefresh.Location = new System.Drawing.Point(10, 8);
             btnRefresh.Size = new System.Drawing.Size(100, 25);
             btnRefresh.Click += (s, e) => LoadRegisteredData();
@@ -132,9 +132,9 @@ namespace CourseRegistrationClient
             dgvRegistered.AutoGenerateColumns = false;
             dgvRegistered.AllowUserToAddRows = false;
 
-            dgvRegistered.Columns.Add("CourseId", "Mã môn");
-            dgvRegistered.Columns.Add("Status", "Tr?ng thái");
-            dgvRegistered.Columns.Add("RegisteredAt", "Th?i gian ??ng ký");
+            dgvRegistered.Columns.Add("CourseId", "MÃ£ mÃ´n");
+            dgvRegistered.Columns.Add("Status", "Tr?ng thÃ¡i");
+            dgvRegistered.Columns.Add("RegisteredAt", "Th?i gian ??ng kÃ½");
 
             tab.Controls.Add(dgvRegistered);
         }
@@ -143,19 +143,19 @@ namespace CourseRegistrationClient
         {
             if (dgvCourses.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng ch?n môn c?n ??ng ký", "L?i");
+                MessageBox.Show("Vui lÃ²ng ch?n mÃ´n c?n ??ng kÃ½", "L?i");
                 return;
             }
 
             string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
             string courseName = dgvCourses.SelectedRows[0].Cells[1].Value.ToString();
 
-            if (MessageBox.Show($"??ng ký môn: {courseName}?", "Xác nh?n", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show($"??ng kÃ½ mÃ´n: {courseName}?", "XÃ¡c nh?n", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 string response = clientSocket.SendRequest($"REGISTER|{userId}|{courseId}");
                 if (response.StartsWith("SUCCESS"))
                 {
-                    MessageBox.Show("??ng ký thành công", "Thành công");
+                    MessageBox.Show("??ng kÃ½ thÃ nh cÃ´ng", "ThÃ nh cÃ´ng");
                     LoadCoursesData();
                     LoadRegisteredData();
                 }

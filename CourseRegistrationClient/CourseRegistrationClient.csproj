@@ -70,6 +70,9 @@
     <Compile Include="StudentForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="StudentForm_New.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
