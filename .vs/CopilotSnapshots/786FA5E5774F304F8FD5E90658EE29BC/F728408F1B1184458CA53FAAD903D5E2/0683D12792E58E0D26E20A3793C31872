@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 
 namespace CourseRegistrationClient
@@ -15,7 +15,7 @@ namespace CourseRegistrationClient
         {
             InitializeComponent();
             clientSocket = socket;
-            this.Text = "??ng k� t�i kho?n - H? th?ng ??ng k� M�n h?c";
+            this.Text = "Đăng ký tài khoản - Hệ thống Đăng ký Môn học";
         }
 
         private void InitializeComponent()
@@ -24,28 +24,28 @@ namespace CourseRegistrationClient
 
             // Labels
             Label lblUsername = new Label();
-            lblUsername.Text = "T�n ??ng nh?p:";
+            lblUsername.Text = "Tên đăng nhập:";
             lblUsername.Location = new System.Drawing.Point(20, 30);
             lblUsername.Size = new System.Drawing.Size(100, 20);
             lblUsername.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblUsername);
 
             Label lblPassword = new Label();
-            lblPassword.Text = "M?t kh?u:";
+            lblPassword.Text = "Mật khẩu:";
             lblPassword.Location = new System.Drawing.Point(20, 70);
             lblPassword.Size = new System.Drawing.Size(100, 20);
             lblPassword.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblPassword);
 
             Label lblConfirm = new Label();
-            lblConfirm.Text = "X�c nh?n m?t kh?u:";
+            lblConfirm.Text = "Xác nhận mật khẩu:";
             lblConfirm.Location = new System.Drawing.Point(20, 110);
             lblConfirm.Size = new System.Drawing.Size(100, 20);
             lblConfirm.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblConfirm);
 
             Label lblFullName = new Label();
-            lblFullName.Text = "H? t�n:";
+            lblFullName.Text = "Họ tên:";
             lblFullName.Location = new System.Drawing.Point(20, 150);
             lblFullName.Size = new System.Drawing.Size(100, 20);
             lblFullName.Font = new System.Drawing.Font("Segoe UI", 10);
@@ -84,7 +84,7 @@ namespace CourseRegistrationClient
 
             // Buttons
             Button btnRegister = new Button();
-            btnRegister.Text = "??ng k�";
+            btnRegister.Text = "Đăng ký";
             btnRegister.Location = new System.Drawing.Point(130, 190);
             btnRegister.Size = new System.Drawing.Size(95, 30);
             btnRegister.Font = new System.Drawing.Font("Segoe UI", 10);
@@ -92,7 +92,7 @@ namespace CourseRegistrationClient
             this.Controls.Add(btnRegister);
 
             Button btnCancel = new Button();
-            btnCancel.Text = "H?y";
+            btnCancel.Text = "Hủy";
             btnCancel.Location = new System.Drawing.Point(235, 190);
             btnCancel.Size = new System.Drawing.Size(95, 30);
             btnCancel.Font = new System.Drawing.Font("Segoe UI", 10);
@@ -118,19 +118,19 @@ namespace CourseRegistrationClient
             // Validation
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fullName))
             {
-                MessageBox.Show("Vui l�ng ?i?n ??y ?? th�ng tin", "L?i");
+                MessageBox.Show("Vui lòng điền đầy đủ thông tin", "Lỗi");
                 return;
             }
 
             if (password != confirm)
             {
-                MessageBox.Show("M?t kh?u kh�ng tr�ng kh?p", "L?i");
+                MessageBox.Show("Mật khẩu không trùng khớp", "Lỗi");
                 return;
             }
 
             if (password.Length < 6)
             {
-                MessageBox.Show("M?t kh?u ph?i c� �t nh?t 6 k� t?", "L?i");
+                MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự", "Lỗi");
                 return;
             }
 
@@ -138,14 +138,14 @@ namespace CourseRegistrationClient
 
             if (response.StartsWith("SUCCESS"))
             {
-                MessageBox.Show("??ng k� th�nh c�ng!", "Th�nh c�ng");
+                MessageBox.Show("Đăng ký thành công!", "Thành công");
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
                 string errorMsg = response.StartsWith("ERROR") ? response.Substring(6) : response;
-                MessageBox.Show("??ng k� th?t b?i: " + errorMsg, "L?i");
+                MessageBox.Show("Đăng ký thất bại: " + errorMsg, "Lỗi");
             }
         }
     }

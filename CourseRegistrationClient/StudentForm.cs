@@ -1,0 +1,342 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+
+namespace CourseRegistrationClient
+{
+    public partial class StudentForm : Form
+    {
+        private ClientSocket clientSocket;
+        private string studentId;
+        private string fullName;
+        private TabControl tabControl;
+        private DataGridView dgvCourses;
+        private DataGridView dgvRegistrations;
+
+        public StudentForm(ClientSocket socket, string id, string name)
+        {
+            clientSocket = socket;
+            studentId = id;
+            fullName = name;
+
+            this.Text = "Student - H? th?ng ??ng ký Môn h?c";
+            this.Size = new System.Drawing.Size(1200, 700);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Font = new System.Drawing.Font("Segoe UI", 10);
+
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+
+            // Top toolbar
+            Panel toolbar = new Panel();
+            toolbar.Dock = DockStyle.Top;
+            toolbar.Height = 60;
+            toolbar.BackColor = System.Drawing.Color.FromArgb(240, 240, 240);
+            this.Controls.Add(toolbar);
+
+            Label lblTitle = new Label();
+            lblTitle.Text = "STUDENT - " + fullName;
+            lblTitle.Location = new System.Drawing.Point(20, 18);
+            lblTitle.Font = new System.Drawing.Font("Segoe UI", 14, System.Drawing.FontStyle.Bold);
+            lblTitle.Size = new System.Drawing.Size(400, 30);
+            toolbar.Controls.Add(lblTitle);
+
+            Button btnLogout = new Button();
+            btnLogout.Text = "??ng xu?t";
+            btnLogout.Location = new System.Drawing.Point(1050, 15);
+            btnLogout.Size = new System.Drawing.Size(120, 35);
+            btnLogout.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
+            btnLogout.ForeColor = System.Drawing.Color.White;
+            btnLogout.Font = new System.Drawing.Font("Segoe UI", 10);
+            btnLogout.Click += (s, e) => { this.DialogResult = DialogResult.Cancel; this.Close(); };
+            toolbar.Controls.Add(btnLogout);
+
+            // TabControl
+            tabControl = new TabControl();
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Font = new System.Drawing.Font("Segoe UI", 10);
+            this.Controls.Add(tabControl);
+
+            // Tab 1: View Courses
+            TabPage tabCourses = new TabPage("Xem Môn H?c");
+            tabCourses.BackColor = System.Drawing.Color.White;
+            CreateCoursesTab(tabCourses);
+            tabControl.TabPages.Add(tabCourses);
+
+            // Tab 2: View Registrations
+            TabPage tabRegistrations = new TabPage("Xem ??ng Ký");
+            tabRegistrations.BackColor = System.Drawing.Color.White;
+            CreateRegistrationsTab(tabRegistrations);
+            tabControl.TabPages.Add(tabRegistrations);
+
+            // Tab 3: View Schedule
+            TabPage tabSchedule = new TabPage("Th?i Khóa Bi?u");
+            tabSchedule.BackColor = System.Drawing.Color.White;
+            CreateScheduleTab(tabSchedule);
+            tabControl.TabPages.Add(tabSchedule);
+
+            this.ResumeLayout(false);
+
+            LoadAllData();
+        }
+
+        private void CreateCoursesTab(TabPage tab)
+        {
+            // Button panel at top
+            Panel pnlButtons = new Panel();
+            pnlButtons.Dock = DockStyle.Top;
+            pnlButtons.Height = 50;
+            pnlButtons.BackColor = System.Drawing.Color.FromArgb(250, 250, 250);
+            pnlButtons.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlButtons);
+
+            Button btnRegister = new Button()
+            {
+                Text = "??ng ký",
+                Location = new System.Drawing.Point(15, 12),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(40, 167, 69),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnRegister.Click += (s, e) => RegisterCourse();
+            pnlButtons.Controls.Add(btnRegister);
+
+            Button btnCancel = new Button()
+            {
+                Text = "H?y",
+                Location = new System.Drawing.Point(125, 12),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(220, 53, 69),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnCancel.Click += (s, e) =>
+            {
+                if (dgvCourses.SelectedRows.Count > 0)
+                {
+                    dgvCourses.SelectedRows[0].Selected = false;
+                    MessageBox.Show("?ã h?y ch?n", "Thông báo");
+                }
+            };
+            pnlButtons.Controls.Add(btnCancel);
+
+            Button btnRefresh = new Button()
+            {
+                Text = "Làm m?i",
+                Location = new System.Drawing.Point(235, 12),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnRefresh.Click += (s, e) => LoadCoursesData();
+            pnlButtons.Controls.Add(btnRefresh);
+
+            // DataGridView fills remaining space
+            dgvCourses = new DataGridView();
+            dgvCourses.Dock = DockStyle.Fill;
+            dgvCourses.AutoGenerateColumns = false;
+            dgvCourses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvCourses.AllowUserToAddRows = false;
+            dgvCourses.BackgroundColor = System.Drawing.Color.White;
+            dgvCourses.GridColor = System.Drawing.Color.LightGray;
+            dgvCourses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvCourses.Font = new System.Drawing.Font("Segoe UI", 10);
+            dgvCourses.RowTemplate.Height = 28;
+
+            dgvCourses.Columns.Add("CourseId", "Mã môn");
+            dgvCourses.Columns[0].Width = 100;
+            dgvCourses.Columns.Add("CourseName", "Tên môn");
+            dgvCourses.Columns[1].Width = 350;
+            dgvCourses.Columns.Add("Credits", "Tín ch?");
+            dgvCourses.Columns[2].Width = 80;
+            dgvCourses.Columns.Add("AvailableSlots", "Ch? tr?ng");
+            dgvCourses.Columns[3].Width = 100;
+
+            ContextMenuStrip cms = new ContextMenuStrip();
+            ToolStripMenuItem registerItem = new ToolStripMenuItem("??ng ký");
+            registerItem.Click += (s, e) => RegisterCourse();
+            cms.Items.Add(registerItem);
+            dgvCourses.ContextMenuStrip = cms;
+
+            tab.Controls.Add(dgvCourses);
+        }
+
+        private void CreateRegistrationsTab(TabPage tab)
+        {
+            // Refresh button
+            Panel pnlButton = new Panel();
+            pnlButton.Dock = DockStyle.Top;
+            pnlButton.Height = 50;
+            pnlButton.BackColor = System.Drawing.Color.FromArgb(250, 250, 250);
+            pnlButton.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlButton);
+
+            Button btnRefresh = new Button()
+            {
+                Text = "Làm m?i",
+                Location = new System.Drawing.Point(15, 12),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnRefresh.Click += (s, e) => LoadRegistrationsData();
+            pnlButton.Controls.Add(btnRefresh);
+
+            // DataGridView
+            dgvRegistrations = new DataGridView();
+            dgvRegistrations.Dock = DockStyle.Fill;
+            dgvRegistrations.AutoGenerateColumns = false;
+            dgvRegistrations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvRegistrations.AllowUserToAddRows = false;
+            dgvRegistrations.BackgroundColor = System.Drawing.Color.White;
+            dgvRegistrations.GridColor = System.Drawing.Color.LightGray;
+            dgvRegistrations.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvRegistrations.Font = new System.Drawing.Font("Segoe UI", 10);
+            dgvRegistrations.RowTemplate.Height = 28;
+
+            dgvRegistrations.Columns.Add("CourseId", "Mã Môn");
+            dgvRegistrations.Columns[0].Width = 100;
+            dgvRegistrations.Columns.Add("CourseName", "Tên Môn");
+            dgvRegistrations.Columns[1].Width = 400;
+            dgvRegistrations.Columns.Add("Credits", "Tín Ch?");
+            dgvRegistrations.Columns[2].Width = 80;
+
+            tab.Controls.Add(dgvRegistrations);
+        }
+
+        private void CreateScheduleTab(TabPage tab)
+        {
+            // Schedule DataGridView
+            DataGridView dgvSchedule = new DataGridView();
+            dgvSchedule.Dock = DockStyle.Fill;
+            dgvSchedule.AutoGenerateColumns = false;
+            dgvSchedule.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvSchedule.AllowUserToAddRows = false;
+            dgvSchedule.BackgroundColor = System.Drawing.Color.White;
+            dgvSchedule.GridColor = System.Drawing.Color.LightGray;
+            dgvSchedule.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvSchedule.Font = new System.Drawing.Font("Segoe UI", 10);
+            dgvSchedule.RowTemplate.Height = 28;
+
+            dgvSchedule.Columns.Add("CourseId", "Mã Môn");
+            dgvSchedule.Columns[0].Width = 100;
+            dgvSchedule.Columns.Add("CourseName", "Tên Môn");
+            dgvSchedule.Columns[1].Width = 350;
+            dgvSchedule.Columns.Add("Credits", "Tín Ch?");
+            dgvSchedule.Columns[2].Width = 80;
+            dgvSchedule.Columns.Add("ClassTime", "Gi? h?c");
+            dgvSchedule.Columns[3].Width = 100;
+            dgvSchedule.Columns.Add("Room", "Phòng h?c");
+            dgvSchedule.Columns[4].Width = 100;
+
+            tab.Controls.Add(dgvSchedule);
+        }
+
+        private void LoadAllData()
+        {
+            LoadCoursesData();
+            LoadRegistrationsData();
+        }
+
+        private void RegisterCourse()
+        {
+            if (dgvCourses.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng ch?n môn c?n ??ng ký", "L?i");
+                return;
+            }
+
+            string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
+            string courseName = dgvCourses.SelectedRows[0].Cells[1].Value.ToString();
+
+            string response = clientSocket.SendRequest($"REGISTER|{studentId}|{courseId}");
+            if (response.StartsWith("SUCCESS"))
+            {
+                MessageBox.Show($"??ng ký môn {courseName} thành công", "Thành công");
+                LoadCoursesData();
+                LoadRegistrationsData();
+            }
+            else
+            {
+                string errorMsg = response.StartsWith("ERROR") ? response.Substring(6) : response;
+                MessageBox.Show("L?i: " + errorMsg, "L?i");
+            }
+        }
+
+        private void LoadCoursesData()
+        {
+            if (dgvCourses == null) return;
+
+            string response = clientSocket.SendRequest("VIEW_COURSES");
+            dgvCourses.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    dynamic courses = JsonConvert.DeserializeObject(json);
+                    foreach (var course in courses)
+                    {
+                        dgvCourses.Rows.Add(
+                            course["CourseId"],
+                            course["CourseName"],
+                            course["Credits"],
+                            course["AvailableSlots"]
+                        );
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERROR] LoadCoursesData: {ex.Message}");
+                }
+            }
+        }
+
+        private void LoadRegistrationsData()
+        {
+            if (dgvRegistrations == null) return;
+
+            string response = clientSocket.SendRequest($"VIEW_REGISTRATIONS|{studentId}");
+            dgvRegistrations.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    if (json.Trim() != "[]")
+                    {
+                        dynamic registrations = JsonConvert.DeserializeObject(json);
+                        foreach (var reg in registrations)
+                        {
+                            dgvRegistrations.Rows.Add(
+                                reg["CourseId"],
+                                reg["CourseName"],
+                                reg["Credits"]
+                            );
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERROR] LoadRegistrationsData: {ex.Message}");
+                }
+            }
+        }
+    }
+}

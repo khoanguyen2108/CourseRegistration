@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Windows.Forms;
 
 namespace CourseRegistrationClient
@@ -15,7 +15,7 @@ namespace CourseRegistrationClient
         {
             InitializeComponent();
             clientSocket = socket;
-            this.Text = "??ng ký tài kho?n - H? th?ng ??ng ký Môn h?c";
+            this.Text = "??ng kÃ½ tÃ i kho?n - H? th?ng ??ng kÃ½ MÃ´n h?c";
         }
 
         private void InitializeComponent()
@@ -24,31 +24,27 @@ namespace CourseRegistrationClient
 
             // Labels
             Label lblUsername = new Label();
-            lblUsername.Text = "Tên ??ng nh?p:";
+            lblUsername.Text = "TÃªn ??ng nh?p:";
             lblUsername.Location = new System.Drawing.Point(20, 30);
             lblUsername.Size = new System.Drawing.Size(100, 20);
-            lblUsername.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblUsername);
 
             Label lblPassword = new Label();
             lblPassword.Text = "M?t kh?u:";
             lblPassword.Location = new System.Drawing.Point(20, 70);
             lblPassword.Size = new System.Drawing.Size(100, 20);
-            lblPassword.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblPassword);
 
             Label lblConfirm = new Label();
-            lblConfirm.Text = "Xác nh?n m?t kh?u:";
+            lblConfirm.Text = "XÃ¡c nh?n m?t kh?u:";
             lblConfirm.Location = new System.Drawing.Point(20, 110);
             lblConfirm.Size = new System.Drawing.Size(100, 20);
-            lblConfirm.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblConfirm);
 
             Label lblFullName = new Label();
-            lblFullName.Text = "H? tên:";
+            lblFullName.Text = "H? tÃªn:";
             lblFullName.Location = new System.Drawing.Point(20, 150);
             lblFullName.Size = new System.Drawing.Size(100, 20);
-            lblFullName.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(lblFullName);
 
             // TextBox
@@ -56,7 +52,6 @@ namespace CourseRegistrationClient
             txtUsername.Name = "txtUsername";
             txtUsername.Location = new System.Drawing.Point(130, 30);
             txtUsername.Size = new System.Drawing.Size(200, 20);
-            txtUsername.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(txtUsername);
 
             txtPassword = new TextBox();
@@ -64,7 +59,6 @@ namespace CourseRegistrationClient
             txtPassword.Location = new System.Drawing.Point(130, 70);
             txtPassword.Size = new System.Drawing.Size(200, 20);
             txtPassword.UseSystemPasswordChar = true;
-            txtPassword.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(txtPassword);
 
             txtConfirm = new TextBox();
@@ -72,22 +66,19 @@ namespace CourseRegistrationClient
             txtConfirm.Location = new System.Drawing.Point(130, 110);
             txtConfirm.Size = new System.Drawing.Size(200, 20);
             txtConfirm.UseSystemPasswordChar = true;
-            txtConfirm.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(txtConfirm);
 
             txtFullName = new TextBox();
             txtFullName.Name = "txtFullName";
             txtFullName.Location = new System.Drawing.Point(130, 150);
             txtFullName.Size = new System.Drawing.Size(200, 20);
-            txtFullName.Font = new System.Drawing.Font("Segoe UI", 10);
             this.Controls.Add(txtFullName);
 
             // Buttons
             Button btnRegister = new Button();
-            btnRegister.Text = "??ng ký";
+            btnRegister.Text = "??ng kÃ½";
             btnRegister.Location = new System.Drawing.Point(130, 190);
             btnRegister.Size = new System.Drawing.Size(95, 30);
-            btnRegister.Font = new System.Drawing.Font("Segoe UI", 10);
             btnRegister.Click += BtnRegister_Click;
             this.Controls.Add(btnRegister);
 
@@ -95,12 +86,10 @@ namespace CourseRegistrationClient
             btnCancel.Text = "H?y";
             btnCancel.Location = new System.Drawing.Point(235, 190);
             btnCancel.Size = new System.Drawing.Size(95, 30);
-            btnCancel.Font = new System.Drawing.Font("Segoe UI", 10);
             btnCancel.Click += (s, e) => { this.DialogResult = DialogResult.Cancel; this.Close(); };
             this.Controls.Add(btnCancel);
 
             this.ClientSize = new System.Drawing.Size(380, 250);
-            this.Font = new System.Drawing.Font("Segoe UI", 10);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -118,19 +107,19 @@ namespace CourseRegistrationClient
             // Validation
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fullName))
             {
-                MessageBox.Show("Vui lòng ?i?n ??y ?? thông tin", "L?i");
+                MessageBox.Show("Vui lÃ²ng ?i?n ??y ?? thÃ´ng tin", "L?i");
                 return;
             }
 
             if (password != confirm)
             {
-                MessageBox.Show("M?t kh?u không trùng kh?p", "L?i");
+                MessageBox.Show("M?t kh?u khÃ´ng trÃ¹ng kh?p", "L?i");
                 return;
             }
 
             if (password.Length < 6)
             {
-                MessageBox.Show("M?t kh?u ph?i có ít nh?t 6 ký t?", "L?i");
+                MessageBox.Show("M?t kh?u ph?i cÃ³ Ã­t nh?t 6 kÃ½ t?", "L?i");
                 return;
             }
 
@@ -138,14 +127,14 @@ namespace CourseRegistrationClient
 
             if (response.StartsWith("SUCCESS"))
             {
-                MessageBox.Show("??ng ký thành công!", "Thành công");
+                MessageBox.Show("??ng kÃ½ thÃ nh cÃ´ng!", "ThÃ nh cÃ´ng");
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
                 string errorMsg = response.StartsWith("ERROR") ? response.Substring(6) : response;
-                MessageBox.Show("??ng ký th?t b?i: " + errorMsg, "L?i");
+                MessageBox.Show("??ng kÃ½ th?t b?i: " + errorMsg, "L?i");
             }
         }
     }
