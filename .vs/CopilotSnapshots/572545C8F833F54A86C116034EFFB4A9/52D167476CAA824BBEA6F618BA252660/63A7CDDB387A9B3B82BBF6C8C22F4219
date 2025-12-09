@@ -1,0 +1,358 @@
+﻿using System;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace CourseRegistrationClient
+{
+    public class AdminForm : Form
+    {
+        private ClientSocket clientSocket;
+        private string userId;
+        private string fullName;
+        private TabControl tabControl;
+        private DataGridView dgvCourses;
+        private DataGridView dgvUsers;
+
+        public AdminForm(ClientSocket socket, string id, string name)
+        {
+            InitializeComponent();
+            clientSocket = socket;
+            userId = id;
+            fullName = name;
+            this.Text = $"Admin - {fullName} - Hệ thống Đăng ký Môn học";
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+
+            // Toolbar
+            Panel pnlToolbar = new Panel();
+            pnlToolbar.Dock = DockStyle.Top;
+            pnlToolbar.Height = 40;
+            pnlToolbar.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(pnlToolbar);
+
+            Label lblWelcome = new Label();
+            lblWelcome.Text = $"Xin chào: {fullName}";
+            lblWelcome.Location = new System.Drawing.Point(10, 10);
+            lblWelcome.Size = new System.Drawing.Size(200, 20);
+            pnlToolbar.Controls.Add(lblWelcome);
+
+            Button btnLogout = new Button();
+            btnLogout.Text = "Đăng xuất";
+            btnLogout.Location = new System.Drawing.Point(700, 8);
+            btnLogout.Size = new System.Drawing.Size(80, 25);
+            btnLogout.Click += (s, e) => { this.DialogResult = DialogResult.Cancel; this.Close(); };
+            pnlToolbar.Controls.Add(btnLogout);
+
+            // TabControl
+            tabControl = new TabControl();
+            tabControl.Dock = DockStyle.Fill;
+            this.Controls.Add(tabControl);
+
+            // Tab 1: Quản lý Môn học
+            TabPage tabCourses = new TabPage("Quản lý Môn học");
+            CreateCoursesTab(tabCourses);
+            tabControl.TabPages.Add(tabCourses);
+
+            // Tab 2: Quản lý Sinh viên
+            TabPage tabUsers = new TabPage("Quản lý Sinh viên");
+            CreateUsersTab(tabUsers);
+            tabControl.TabPages.Add(tabUsers);
+
+            this.ClientSize = new System.Drawing.Size(900, 600);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.ResumeLayout(false);
+
+            LoadCoursesData();
+            LoadUsersData();
+        }
+
+        private void CreateCoursesTab(TabPage tab)
+        {
+            // Panel thêm môn
+            Panel pnlAdd = new Panel();
+            pnlAdd.Dock = DockStyle.Top;
+            pnlAdd.Height = 50;
+            pnlAdd.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlAdd);
+
+            Label[] labels = new Label[4];
+            TextBox[] textboxes = new TextBox[4];
+            string[] labelTexts = { "Mã môn:", "Tên môn:", "Tín chỉ:", "Chỗ trống:" };
+
+            for (int i = 0; i < 4; i++)
+            {
+                labels[i] = new Label();
+                labels[i].Text = labelTexts[i];
+                labels[i].Location = new System.Drawing.Point(10 + i * 200, 10);
+                labels[i].Size = new System.Drawing.Size(60, 20);
+                pnlAdd.Controls.Add(labels[i]);
+
+                textboxes[i] = new TextBox();
+                textboxes[i].Name = "txt" + i;
+                textboxes[i].Location = new System.Drawing.Point(70 + i * 200, 10);
+                textboxes[i].Size = new System.Drawing.Size(130, 20);
+                pnlAdd.Controls.Add(textboxes[i]);
+            }
+
+            Button btnAddCourse = new Button();
+            btnAddCourse.Text = "Thêm Môn";
+            btnAddCourse.Location = new System.Drawing.Point(10, 35);
+            btnAddCourse.Size = new System.Drawing.Size(100, 25);
+            btnAddCourse.Click += (s, e) => BtnAddCourse_Click(textboxes);
+            pnlAdd.Controls.Add(btnAddCourse);
+
+            // DataGridView
+            dgvCourses = new DataGridView();
+            dgvCourses.Dock = DockStyle.Fill;
+            dgvCourses.AutoGenerateColumns = false;
+            dgvCourses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvCourses.AllowUserToAddRows = false;
+
+            dgvCourses.Columns.Add("CourseId", "Mã môn");
+            dgvCourses.Columns.Add("CourseName", "Tên môn");
+            dgvCourses.Columns.Add("Credits", "Tín chỉ");
+            dgvCourses.Columns.Add("AvailableSlots", "Chỗ trống");
+
+            // Context menu
+            ContextMenuStrip cmsDelete = new ContextMenuStrip();
+            ToolStripMenuItem deleteItem = new ToolStripMenuItem("Xóa môn");
+            deleteItem.Click += (s, e) => BtnDeleteCourse_Click();
+            cmsDelete.Items.Add(deleteItem);
+            dgvCourses.ContextMenuStrip = cmsDelete;
+
+            tab.Controls.Add(dgvCourses);
+        }
+
+        private void CreateUsersTab(TabPage tab)
+        {
+            // Panel thêm sinh viên
+            Panel pnlAdd = new Panel();
+            pnlAdd.Dock = DockStyle.Top;
+            pnlAdd.Height = 50;
+            pnlAdd.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlAdd);
+
+            Label lblUsername = new Label();
+            lblUsername.Text = "Tên ĐN:";
+            lblUsername.Location = new System.Drawing.Point(10, 10);
+            lblUsername.Size = new System.Drawing.Size(50, 20);
+            pnlAdd.Controls.Add(lblUsername);
+
+            TextBox txtUsername = new TextBox();
+            txtUsername.Name = "txtUsername";
+            txtUsername.Location = new System.Drawing.Point(65, 10);
+            txtUsername.Size = new System.Drawing.Size(100, 20);
+            pnlAdd.Controls.Add(txtUsername);
+
+            Label lblPassword = new Label();
+            lblPassword.Text = "Mật khẩu:";
+            lblPassword.Location = new System.Drawing.Point(175, 10);
+            lblPassword.Size = new System.Drawing.Size(60, 20);
+            pnlAdd.Controls.Add(lblPassword);
+
+            TextBox txtPassword = new TextBox();
+            txtPassword.Name = "txtPassword";
+            txtPassword.Location = new System.Drawing.Point(240, 10);
+            txtPassword.Size = new System.Drawing.Size(100, 20);
+            txtPassword.UseSystemPasswordChar = true;
+            pnlAdd.Controls.Add(txtPassword);
+
+            Label lblFullName = new Label();
+            lblFullName.Text = "Họ tên:";
+            lblFullName.Location = new System.Drawing.Point(350, 10);
+            lblFullName.Size = new System.Drawing.Size(50, 20);
+            pnlAdd.Controls.Add(lblFullName);
+
+            TextBox txtFullName = new TextBox();
+            txtFullName.Name = "txtFullName";
+            txtFullName.Location = new System.Drawing.Point(405, 10);
+            txtFullName.Size = new System.Drawing.Size(150, 20);
+            pnlAdd.Controls.Add(txtFullName);
+
+            Button btnAdd = new Button();
+            btnAdd.Text = "Thêm";
+            btnAdd.Location = new System.Drawing.Point(10, 35);
+            btnAdd.Size = new System.Drawing.Size(100, 25);
+            btnAdd.Click += (s, e) => BtnAddUser_Click(txtUsername, txtPassword, txtFullName);
+            pnlAdd.Controls.Add(btnAdd);
+
+            // DataGridView
+            dgvUsers = new DataGridView();
+            dgvUsers.Dock = DockStyle.Fill;
+            dgvUsers.AutoGenerateColumns = false;
+            dgvUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvUsers.AllowUserToAddRows = false;
+
+            dgvUsers.Columns.Add("UserId", "ID");
+            dgvUsers.Columns.Add("Username", "Tên đăng nhập");
+            dgvUsers.Columns.Add("FullName", "Họ tên");
+            dgvUsers.Columns.Add("Role", "Quyền");
+
+            // Context menu
+            ContextMenuStrip cms = new ContextMenuStrip();
+            ToolStripMenuItem delete = new ToolStripMenuItem("Xóa");
+            delete.Click += (s, e) => BtnDeleteUser_Click();
+            cms.Items.Add(delete);
+            dgvUsers.ContextMenuStrip = cms;
+
+            tab.Controls.Add(dgvUsers);
+        }
+
+        private void BtnAddCourse_Click(TextBox[] textboxes)
+        {
+            string courseId = textboxes[0].Text.Trim();
+            string courseName = textboxes[1].Text.Trim();
+            string credits = textboxes[2].Text.Trim();
+            string slots = textboxes[3].Text.Trim();
+
+            if (string.IsNullOrEmpty(courseId) || string.IsNullOrEmpty(courseName) || 
+                string.IsNullOrEmpty(credits) || string.IsNullOrEmpty(slots))
+            {
+                MessageBox.Show("Vui lòng điền đầy đủ thông tin", "Lỗi");
+                return;
+            }
+
+            string response = clientSocket.SendRequest($"ADD_COURSE|{courseId}|{courseName}|{credits}|{slots}");
+            if (response.StartsWith("SUCCESS"))
+            {
+                MessageBox.Show("Thêm môn thành công", "Thành công");
+                LoadCoursesData();
+                foreach (var txt in textboxes) txt.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Lỗi: " + response, "Lỗi");
+            }
+        }
+
+        private void BtnDeleteCourse_Click()
+        {
+            if (dgvCourses.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn môn cần xóa", "Lỗi");
+                return;
+            }
+
+            string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
+            if (MessageBox.Show($"Xóa môn {courseId}?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                string response = clientSocket.SendRequest($"DELETE_COURSE|{courseId}");
+                if (response.StartsWith("SUCCESS"))
+                {
+                    MessageBox.Show("Xóa thành công", "Thành công");
+                    LoadCoursesData();
+                }
+            }
+        }
+
+        private void BtnAddUser_Click(TextBox txtUsername, TextBox txtPassword, TextBox txtFullName)
+        {
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text;
+            string fullName = txtFullName.Text.Trim();
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fullName))
+            {
+                MessageBox.Show("Vui lòng điền đầy đủ thông tin", "Lỗi");
+                return;
+            }
+
+            string response = clientSocket.SendRequest($"REGISTER_USER|{username}|{password}|{fullName}");
+            if (response.StartsWith("SUCCESS"))
+            {
+                MessageBox.Show("Thêm sinh viên thành công", "Thành công");
+                LoadUsersData();
+                txtUsername.Clear();
+                txtPassword.Clear();
+                txtFullName.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Lỗi: " + response, "Lỗi");
+            }
+        }
+
+        private void BtnDeleteUser_Click()
+        {
+            if (dgvUsers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn sinh viên cần xóa", "Lỗi");
+                return;
+            }
+
+            string userId = dgvUsers.SelectedRows[0].Cells[0].Value.ToString();
+            string userName = dgvUsers.SelectedRows[0].Cells[1].Value.ToString();
+
+            if (MessageBox.Show($"Xóa sinh viên {userName}?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                string response = clientSocket.SendRequest($"DELETE_USER|{userId}");
+                if (response.StartsWith("SUCCESS"))
+                {
+                    MessageBox.Show("Xóa thành công", "Thành công");
+                    LoadUsersData();
+                }
+                else
+                {
+                    MessageBox.Show("Lỗi: " + response, "Lỗi");
+                }
+            }
+        }
+
+        private void LoadCoursesData()
+        {
+            string response = clientSocket.SendRequest("VIEW_COURSES");
+            dgvCourses.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    dynamic courses = JsonConvert.DeserializeObject(json);
+                    foreach (var course in courses)
+                    {
+                        dgvCourses.Rows.Add(
+                            course["CourseId"],
+                            course["CourseName"],
+                            course["Credits"],
+                            course["AvailableSlots"]
+                        );
+                    }
+                }
+                catch { }
+            }
+        }
+
+        private void LoadUsersData()
+        {
+            string response = clientSocket.SendRequest("GET_ALL_USERS");
+            dgvUsers.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    if (json.Trim() != "[]")
+                    {
+                        dynamic users = JsonConvert.DeserializeObject(json);
+                        foreach (var user in users)
+                        {
+                            dgvUsers.Rows.Add(
+                                user["UserId"],
+                                user["Username"],
+                                user["FullName"],
+                                user["Role"]
+                            );
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+    }
+}

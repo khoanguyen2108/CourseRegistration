@@ -1,0 +1,34 @@
+[
+  {
+    "UserId": "ADMIN001",
+    "Username": "admin",
+    "Password": "admin123",
+    "Role": "Admin",
+    "FullName": "Qu?n tr? viên",
+    "CreatedAt": "2025-12-09T07:48:01.5472096+07:00"
+  },
+  {
+    "UserId": "SV001",
+    "Username": "student",
+    "Password": "student123",
+    "Role": "Student",
+    "FullName": "Sinh viên 001",
+    "CreatedAt": "2025-12-09T07:48:01.5489473+07:00"
+  },
+  {
+    "UserId": "SV679710",
+    "Username": "123456",
+    "Password": "123456",
+    "Role": "Student",
+    "FullName": "1",
+    "CreatedAt": "2025-12-09T07:56:48.4689668+07:00"
+  },
+  {
+    "UserId": "SV478170",
+    "Username": "khoa",
+    "Password": "123456",
+    "Role": "Student",
+    "FullName": "dang khoa",
+    "CreatedAt": "2025-12-09T08:12:55.9488335+07:00"
+  }
+]

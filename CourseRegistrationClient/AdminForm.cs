@@ -1,0 +1,491 @@
+using System;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+
+namespace CourseRegistrationClient
+{
+    public class AdminForm : Form
+    {
+        private ClientSocket clientSocket;
+        private string userId;
+        private string fullName;
+        private TabControl tabControl;
+        private DataGridView dgvCourses;
+        private DataGridView dgvUsers;
+        private DataGridView dgvRegistrations;
+
+        public AdminForm(ClientSocket socket, string id, string name)
+        {
+            clientSocket = socket;
+            userId = id;
+            fullName = name;
+            
+            this.Text = "Admin - He thong Dang ky Mon hoc";
+            this.Size = new System.Drawing.Size(1200, 750);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Font = new System.Drawing.Font("Segoe UI", 10);
+            
+            InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+
+            // Top toolbar
+            Panel toolbar = new Panel();
+            toolbar.Dock = DockStyle.Top;
+            toolbar.Height = 60;
+            toolbar.BackColor = System.Drawing.Color.FromArgb(240, 240, 240);
+            this.Controls.Add(toolbar);
+
+            Label lblTitle = new Label();
+            lblTitle.Text = "ADMIN - " + fullName;
+            lblTitle.Location = new System.Drawing.Point(20, 18);
+            lblTitle.Font = new System.Drawing.Font("Segoe UI", 14, System.Drawing.FontStyle.Bold);
+            lblTitle.Size = new System.Drawing.Size(400, 30);
+            toolbar.Controls.Add(lblTitle);
+
+            Button btnLogout = new Button();
+            btnLogout.Text = "Dang xuat";
+            btnLogout.Location = new System.Drawing.Point(1050, 15);
+            btnLogout.Size = new System.Drawing.Size(120, 35);
+            btnLogout.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
+            btnLogout.ForeColor = System.Drawing.Color.White;
+            btnLogout.Font = new System.Drawing.Font("Segoe UI", 10);
+            btnLogout.Click += (s, e) => { this.DialogResult = DialogResult.Cancel; this.Close(); };
+            toolbar.Controls.Add(btnLogout);
+
+            // TabControl
+            tabControl = new TabControl();
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Font = new System.Drawing.Font("Segoe UI", 10);
+            this.Controls.Add(tabControl);
+
+            // Tab 1: Quan ly Mon hoc
+            TabPage tabCourses = new TabPage("Quan ly Mon hoc");
+            tabCourses.BackColor = System.Drawing.Color.White;
+            CreateCoursesTab(tabCourses);
+            tabControl.TabPages.Add(tabCourses);
+
+            // Tab 2: Quan ly Sinh vien
+            TabPage tabUsers = new TabPage("Quan ly Sinh vien");
+            tabUsers.BackColor = System.Drawing.Color.White;
+            CreateUsersTab(tabUsers);
+            tabControl.TabPages.Add(tabUsers);
+
+            // Tab 3: Xem Dang ky Sinh vien
+            TabPage tabRegistrations = new TabPage("Xem Dang ky Sinh vien");
+            tabRegistrations.BackColor = System.Drawing.Color.White;
+            CreateRegistrationsTab(tabRegistrations);
+            tabControl.TabPages.Add(tabRegistrations);
+
+            this.ResumeLayout(false);
+
+            LoadAllData();
+        }
+
+        private void CreateCoursesTab(TabPage tab)
+        {
+            // Input panel
+            Panel pnlInput = new Panel();
+            pnlInput.Dock = DockStyle.Top;
+            pnlInput.Height = 100;
+            pnlInput.BackColor = System.Drawing.Color.FromArgb(250, 250, 250);
+            pnlInput.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlInput);
+
+            // Row 1: Labels
+            Label lbl1 = new Label() { Text = "Ma mon:", Location = new System.Drawing.Point(15, 10), Size = new System.Drawing.Size(90, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            Label lbl2 = new Label() { Text = "Ten mon:", Location = new System.Drawing.Point(250, 10), Size = new System.Drawing.Size(90, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            Label lbl3 = new Label() { Text = "Tin chi:", Location = new System.Drawing.Point(550, 10), Size = new System.Drawing.Size(90, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            Label lbl4 = new Label() { Text = "Cho trong:", Location = new System.Drawing.Point(750, 10), Size = new System.Drawing.Size(90, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            pnlInput.Controls.AddRange(new Control[] { lbl1, lbl2, lbl3, lbl4 });
+
+            // Row 2: Textboxes
+            TextBox txtCourseId = new TextBox() { Location = new System.Drawing.Point(15, 35), Size = new System.Drawing.Size(220, 25), Font = new System.Drawing.Font("Segoe UI", 10) };
+            TextBox txtCourseName = new TextBox() { Location = new System.Drawing.Point(250, 35), Size = new System.Drawing.Size(280, 25), Font = new System.Drawing.Font("Segoe UI", 10) };
+            TextBox txtCredits = new TextBox() { Location = new System.Drawing.Point(550, 35), Size = new System.Drawing.Size(180, 25), Font = new System.Drawing.Font("Segoe UI", 10) };
+            TextBox txtSlots = new TextBox() { Location = new System.Drawing.Point(750, 35), Size = new System.Drawing.Size(180, 25), Font = new System.Drawing.Font("Segoe UI", 10) };
+            pnlInput.Controls.AddRange(new Control[] { txtCourseId, txtCourseName, txtCredits, txtSlots });
+
+            Button btnAdd = new Button()
+            {
+                Text = "Them Mon",
+                Location = new System.Drawing.Point(950, 35),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(40, 167, 69),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnAdd.Click += (s, e) => BtnAddCourse_Click(new[] { txtCourseId, txtCourseName, txtCredits, txtSlots });
+            pnlInput.Controls.Add(btnAdd);
+
+            Button btnRefresh = new Button()
+            {
+                Text = "Lam moi",
+                Location = new System.Drawing.Point(1050, 35),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnRefresh.Click += (s, e) => LoadCoursesData();
+            pnlInput.Controls.Add(btnRefresh);
+
+            // DataGridView
+            dgvCourses = new DataGridView();
+            dgvCourses.Dock = DockStyle.Fill;
+            dgvCourses.AutoGenerateColumns = false;
+            dgvCourses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvCourses.AllowUserToAddRows = false;
+            dgvCourses.BackgroundColor = System.Drawing.Color.White;
+            dgvCourses.GridColor = System.Drawing.Color.LightGray;
+            dgvCourses.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvCourses.Font = new System.Drawing.Font("Segoe UI", 10);
+            dgvCourses.RowTemplate.Height = 28;
+
+            dgvCourses.Columns.Add("CourseId", "Ma mon");
+            dgvCourses.Columns[0].Width = 100;
+            dgvCourses.Columns.Add("CourseName", "Ten mon");
+            dgvCourses.Columns[1].Width = 300;
+            dgvCourses.Columns.Add("Credits", "Tin chi");
+            dgvCourses.Columns[2].Width = 100;
+            dgvCourses.Columns.Add("AvailableSlots", "Cho trong");
+            dgvCourses.Columns[3].Width = 100;
+
+            ContextMenuStrip cms = new ContextMenuStrip();
+            ToolStripMenuItem deleteItem = new ToolStripMenuItem("Xoa");
+            deleteItem.Click += (s, e) => BtnDeleteCourse_Click();
+            cms.Items.Add(deleteItem);
+            dgvCourses.ContextMenuStrip = cms;
+
+            tab.Controls.Add(dgvCourses);
+        }
+
+        private void CreateUsersTab(TabPage tab)
+        {
+            // Input panel
+            Panel pnlInput = new Panel();
+            pnlInput.Dock = DockStyle.Top;
+            pnlInput.Height = 100;
+            pnlInput.BackColor = System.Drawing.Color.FromArgb(250, 250, 250);
+            pnlInput.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlInput);
+
+            // Row 1: Labels
+            Label lbl1 = new Label() { Text = "Ten dang nhap:", Location = new System.Drawing.Point(15, 10), Size = new System.Drawing.Size(100, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            Label lbl2 = new Label() { Text = "Mat khau:", Location = new System.Drawing.Point(250, 10), Size = new System.Drawing.Size(100, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            Label lbl3 = new Label() { Text = "Ho ten:", Location = new System.Drawing.Point(550, 10), Size = new System.Drawing.Size(100, 20), Font = new System.Drawing.Font("Segoe UI", 9) };
+            pnlInput.Controls.AddRange(new Control[] { lbl1, lbl2, lbl3 });
+
+            // Row 2: Textboxes
+            TextBox txtUsername = new TextBox() { Location = new System.Drawing.Point(15, 35), Size = new System.Drawing.Size(220, 25), Font = new System.Drawing.Font("Segoe UI", 10) };
+            TextBox txtPassword = new TextBox() { Location = new System.Drawing.Point(250, 35), Size = new System.Drawing.Size(280, 25), UseSystemPasswordChar = true, Font = new System.Drawing.Font("Segoe UI", 10) };
+            TextBox txtFullName = new TextBox() { Location = new System.Drawing.Point(550, 35), Size = new System.Drawing.Size(280, 25), Font = new System.Drawing.Font("Segoe UI", 10) };
+            pnlInput.Controls.AddRange(new Control[] { txtUsername, txtPassword, txtFullName });
+
+            Button btnAdd = new Button()
+            {
+                Text = "Them Sinh Vien",
+                Location = new System.Drawing.Point(850, 35),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(40, 167, 69),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnAdd.Click += (s, e) => BtnAddUser_Click(txtUsername, txtPassword, txtFullName);
+            pnlInput.Controls.Add(btnAdd);
+
+            Button btnRefresh = new Button()
+            {
+                Text = "Lam moi",
+                Location = new System.Drawing.Point(950, 35),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnRefresh.Click += (s, e) => LoadUsersData();
+            pnlInput.Controls.Add(btnRefresh);
+
+            // DataGridView
+            dgvUsers = new DataGridView();
+            dgvUsers.Dock = DockStyle.Fill;
+            dgvUsers.AutoGenerateColumns = false;
+            dgvUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvUsers.AllowUserToAddRows = false;
+            dgvUsers.BackgroundColor = System.Drawing.Color.White;
+            dgvUsers.GridColor = System.Drawing.Color.LightGray;
+            dgvUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvUsers.Font = new System.Drawing.Font("Segoe UI", 10);
+            dgvUsers.RowTemplate.Height = 28;
+
+            dgvUsers.Columns.Add("UserId", "ID Sinh Vien");
+            dgvUsers.Columns[0].Width = 120;
+            dgvUsers.Columns.Add("Username", "Ten Dang Nhap");
+            dgvUsers.Columns[1].Width = 150;
+            dgvUsers.Columns.Add("FullName", "Ho Ten");
+            dgvUsers.Columns[2].Width = 250;
+            dgvUsers.Columns.Add("Role", "Quyen");
+            dgvUsers.Columns[3].Width = 100;
+
+            ContextMenuStrip cms = new ContextMenuStrip();
+            ToolStripMenuItem deleteItem = new ToolStripMenuItem("Xoa");
+            deleteItem.Click += (s, e) => BtnDeleteUser_Click();
+            cms.Items.Add(deleteItem);
+            dgvUsers.ContextMenuStrip = cms;
+
+            tab.Controls.Add(dgvUsers);
+        }
+
+        private void CreateRegistrationsTab(TabPage tab)
+        {
+            // Refresh button
+            Panel pnlButton = new Panel();
+            pnlButton.Dock = DockStyle.Top;
+            pnlButton.Height = 50;
+            pnlButton.BackColor = System.Drawing.Color.FromArgb(250, 250, 250);
+            pnlButton.BorderStyle = BorderStyle.FixedSingle;
+            tab.Controls.Add(pnlButton);
+
+            Button btnRefresh = new Button()
+            {
+                Text = "Lam moi",
+                Location = new System.Drawing.Point(15, 12),
+                Size = new System.Drawing.Size(100, 25),
+                BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
+                ForeColor = System.Drawing.Color.White,
+                Font = new System.Drawing.Font("Segoe UI", 10)
+            };
+            btnRefresh.Click += (s, e) => LoadRegistrationsData();
+            pnlButton.Controls.Add(btnRefresh);
+
+            // DataGridView
+            dgvRegistrations = new DataGridView();
+            dgvRegistrations.Dock = DockStyle.Fill;
+            dgvRegistrations.AutoGenerateColumns = false;
+            dgvRegistrations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvRegistrations.AllowUserToAddRows = false;
+            dgvRegistrations.BackgroundColor = System.Drawing.Color.White;
+            dgvRegistrations.GridColor = System.Drawing.Color.LightGray;
+            dgvRegistrations.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvRegistrations.Font = new System.Drawing.Font("Segoe UI", 10);
+            dgvRegistrations.RowTemplate.Height = 28;
+
+            dgvRegistrations.Columns.Add("RegistrationId", "ID");
+            dgvRegistrations.Columns[0].Width = 80;
+            dgvRegistrations.Columns.Add("UserId", "ID Sinh Vien");
+            dgvRegistrations.Columns[1].Width = 120;
+            dgvRegistrations.Columns.Add("CourseId", "Ma Mon");
+            dgvRegistrations.Columns[2].Width = 100;
+            dgvRegistrations.Columns.Add("CourseName", "Ten Mon");
+            dgvRegistrations.Columns[3].Width = 250;
+            dgvRegistrations.Columns.Add("Credits", "Tin Chi");
+            dgvRegistrations.Columns[4].Width = 80;
+            dgvRegistrations.Columns.Add("Semester", "Hoc Ky");
+            dgvRegistrations.Columns[5].Width = 100;
+
+            tab.Controls.Add(dgvRegistrations);
+        }
+
+        private void LoadAllData()
+        {
+            LoadCoursesData();
+            LoadUsersData();
+            LoadRegistrationsData();
+        }
+
+        private void BtnAddCourse_Click(TextBox[] textboxes)
+        {
+            string courseId = textboxes[0].Text.Trim();
+            string courseName = textboxes[1].Text.Trim();
+            string credits = textboxes[2].Text.Trim();
+            string slots = textboxes[3].Text.Trim();
+
+            if (string.IsNullOrEmpty(courseId) || string.IsNullOrEmpty(courseName) || 
+                string.IsNullOrEmpty(credits) || string.IsNullOrEmpty(slots))
+            {
+                MessageBox.Show("Vui long dien day du thong tin", "Loi");
+                return;
+            }
+
+            string response = clientSocket.SendRequest($"ADD_COURSE|{courseId}|{courseName}|{credits}|{slots}");
+            if (response.StartsWith("SUCCESS"))
+            {
+                MessageBox.Show("Them mon thanh cong", "Thanh cong");
+                LoadCoursesData();
+                foreach (var txt in textboxes) txt.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Loi: " + response.Substring(6), "Loi");
+            }
+        }
+
+        private void BtnDeleteCourse_Click()
+        {
+            if (dgvCourses.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui long chon mon can xoa", "Loi");
+                return;
+            }
+
+            string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
+            if (MessageBox.Show($"Xoa mon {courseId}?", "Xac nhan", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                string response = clientSocket.SendRequest($"DELETE_COURSE|{courseId}");
+                if (response.StartsWith("SUCCESS"))
+                {
+                    MessageBox.Show("Xoa thanh cong", "Thanh cong");
+                    LoadCoursesData();
+                }
+            }
+        }
+
+        private void BtnAddUser_Click(TextBox txtUsername, TextBox txtPassword, TextBox txtFullName)
+        {
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Text;
+            string fullName = txtFullName.Text.Trim();
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(fullName))
+            {
+                MessageBox.Show("Vui long dien day du thong tin", "Loi");
+                return;
+            }
+
+            string response = clientSocket.SendRequest($"REGISTER_USER|{username}|{password}|{fullName}");
+            if (response.StartsWith("SUCCESS"))
+            {
+                MessageBox.Show("Them sinh vien thanh cong", "Thanh cong");
+                LoadUsersData();
+                txtUsername.Clear();
+                txtPassword.Clear();
+                txtFullName.Clear();
+            }
+            else
+            {
+                MessageBox.Show("Loi: " + response.Substring(6), "Loi");
+            }
+        }
+
+        private void BtnDeleteUser_Click()
+        {
+            if (dgvUsers.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui long chon sinh vien can xoa", "Loi");
+                return;
+            }
+
+            string userId = dgvUsers.SelectedRows[0].Cells[0].Value.ToString();
+            string userName = dgvUsers.SelectedRows[0].Cells[1].Value.ToString();
+
+            if (MessageBox.Show($"Xoa sinh vien {userName}?", "Xac nhan", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                string response = clientSocket.SendRequest($"DELETE_USER|{userId}");
+                if (response.StartsWith("SUCCESS"))
+                {
+                    MessageBox.Show("Xoa thanh cong", "Thanh cong");
+                    LoadUsersData();
+                }
+            }
+        }
+
+        private void LoadCoursesData()
+        {
+            if (dgvCourses == null) return;
+
+            string response = clientSocket.SendRequest("VIEW_COURSES");
+            dgvCourses.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    dynamic courses = JsonConvert.DeserializeObject(json);
+                    foreach (var course in courses)
+                    {
+                        dgvCourses.Rows.Add(
+                            course["CourseId"],
+                            course["CourseName"],
+                            course["Credits"],
+                            course["AvailableSlots"]
+                        );
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERROR] LoadCoursesData: {ex.Message}");
+                }
+            }
+        }
+
+        private void LoadUsersData()
+        {
+            if (dgvUsers == null) return;
+
+            string response = clientSocket.SendRequest("GET_ALL_USERS");
+            dgvUsers.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    if (json.Trim() != "[]")
+                    {
+                        dynamic users = JsonConvert.DeserializeObject(json);
+                        foreach (var user in users)
+                        {
+                            dgvUsers.Rows.Add(
+                                user["UserId"],
+                                user["Username"],
+                                user["FullName"],
+                                user["Role"]
+                            );
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERROR] LoadUsersData: {ex.Message}");
+                }
+            }
+        }
+
+        private void LoadRegistrationsData()
+        {
+            if (dgvRegistrations == null) return;
+
+            string response = clientSocket.ViewAllRegistrations();
+            dgvRegistrations.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
+            {
+                try
+                {
+                    string json = response.Substring(8);
+                    dynamic registrations = JsonConvert.DeserializeObject(json);
+                    foreach (var reg in registrations)
+                    {
+                        dgvRegistrations.Rows.Add(
+                            reg["RegistrationId"],
+                            reg["UserId"],
+                            reg["CourseId"],
+                            reg["CourseName"],
+                            reg["Credits"],
+                            reg["Semester"]
+                        );
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERROR] LoadRegistrationsData: {ex.Message}");
+                }
+            }
+        }
+    }
+}

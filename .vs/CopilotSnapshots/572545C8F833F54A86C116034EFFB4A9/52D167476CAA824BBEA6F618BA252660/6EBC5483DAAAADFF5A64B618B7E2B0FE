@@ -1,0 +1,91 @@
+﻿using System;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+
+namespace CourseRegistrationClient
+{
+    public partial class Form1 : Form
+    {
+        private ClientSocket clientSocket;
+        private string currentUserId;
+        private string currentUserRole;
+        private string currentUserName;
+
+        public Form1()
+        {
+            InitializeComponent();
+            clientSocket = new ClientSocket();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (!clientSocket.Connect())
+            {
+                MessageBox.Show("Không thể kết nối đến server!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+                return;
+            }
+
+            ShowLoginForm();
+        }
+
+        private void ShowLoginForm()
+        {
+            while (true)
+            {
+                LoginForm loginForm = new LoginForm(clientSocket);
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    currentUserId = loginForm.UserId;
+                    currentUserRole = loginForm.UserRole;
+                    currentUserName = loginForm.FullName;
+
+                    Console.WriteLine($"[CLIENT] Login success - UserId: {currentUserId}, Role: {currentUserRole}, Name: {currentUserName}");
+
+                    this.Hide();
+                    ShowRoleBasedForm();
+                    break;
+                }
+                else
+                {
+                    // User đóng login form mà không đăng nhập
+                    this.Close();
+                    break;
+                }
+            }
+        }
+
+        private void ShowRoleBasedForm()
+        {
+            if (currentUserRole == "Admin")
+            {
+                Console.WriteLine("[CLIENT] Opening AdminForm...");
+                AdminForm adminForm = new AdminForm(clientSocket, currentUserId, currentUserName);
+                adminForm.ShowDialog();
+                Console.WriteLine("[CLIENT] AdminForm closed");
+                this.Show();
+                ShowLoginForm();
+            }
+            else if (currentUserRole == "Student")
+            {
+                Console.WriteLine("[CLIENT] Opening StudentForm...");
+                StudentForm studentForm = new StudentForm(clientSocket, currentUserId, currentUserName);
+                studentForm.ShowDialog();
+                Console.WriteLine("[CLIENT] StudentForm closed");
+                this.Show();
+                ShowLoginForm();
+            }
+            else
+            {
+                MessageBox.Show($"Role không được nhận diện: {currentUserRole}", "Lỗi");
+                this.Show();
+                ShowLoginForm();
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            clientSocket.Disconnect();
+        }
+    }
+}
