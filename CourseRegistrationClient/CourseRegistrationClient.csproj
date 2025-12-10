@@ -65,15 +65,15 @@
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="StudentForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="StudentForm_New.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="Form1.resx">

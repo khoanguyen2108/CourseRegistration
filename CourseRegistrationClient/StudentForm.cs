@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,7 +26,7 @@ namespace CourseRegistrationClient
             studentId = id;
             fullName = name;
 
-            this.Text = "Student - H? th?ng ??ng k˝ MÙn h?c";
+            this.Text = "Student - H·ªá th·ªëng ƒëƒÉng k√Ω M√¥n h·ªçc";
             this.Size = new System.Drawing.Size(1200, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Font = new System.Drawing.Font("Segoe UI", 10);
@@ -53,7 +53,7 @@ namespace CourseRegistrationClient
             toolbar.Controls.Add(lblTitle);
 
             Button btnLogout = new Button();
-            btnLogout.Text = "??ng xu?t";
+            btnLogout.Text = "ƒêƒÉng xu·∫•t";
             btnLogout.Location = new System.Drawing.Point(1050, 15);
             btnLogout.Size = new System.Drawing.Size(120, 35);
             btnLogout.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
@@ -69,19 +69,19 @@ namespace CourseRegistrationClient
             this.Controls.Add(tabControl);
 
             // Tab 1: View Courses
-            TabPage tabCourses = new TabPage("Xem MÙn H?c");
+            TabPage tabCourses = new TabPage("Xem M√¥n H·ªçc");
             tabCourses.BackColor = System.Drawing.Color.White;
             CreateCoursesTab(tabCourses);
             tabControl.TabPages.Add(tabCourses);
 
             // Tab 2: View Registrations
-            TabPage tabRegistrations = new TabPage("Xem ??ng K˝");
+            TabPage tabRegistrations = new TabPage("Xem ƒêƒÉng K√Ω");
             tabRegistrations.BackColor = System.Drawing.Color.White;
             CreateRegistrationsTab(tabRegistrations);
             tabControl.TabPages.Add(tabRegistrations);
 
             // Tab 3: View Schedule
-            TabPage tabSchedule = new TabPage("Th?i KhÛa Bi?u");
+            TabPage tabSchedule = new TabPage("Th?i Kh√≥a Bi?u");
             tabSchedule.BackColor = System.Drawing.Color.White;
             CreateScheduleTab(tabSchedule);
             tabControl.TabPages.Add(tabSchedule);
@@ -103,7 +103,7 @@ namespace CourseRegistrationClient
 
             Button btnRegister = new Button()
             {
-                Text = "??ng k˝",
+                Text = "ƒêƒÉng k√Ω",
                 Location = new System.Drawing.Point(15, 12),
                 Size = new System.Drawing.Size(100, 25),
                 BackColor = System.Drawing.Color.FromArgb(40, 167, 69),
@@ -115,7 +115,7 @@ namespace CourseRegistrationClient
 
             Button btnCancel = new Button()
             {
-                Text = "H?y",
+                Text = "H·ªßy",
                 Location = new System.Drawing.Point(125, 12),
                 Size = new System.Drawing.Size(100, 25),
                 BackColor = System.Drawing.Color.FromArgb(220, 53, 69),
@@ -127,14 +127,14 @@ namespace CourseRegistrationClient
                 if (dgvCourses.SelectedRows.Count > 0)
                 {
                     dgvCourses.SelectedRows[0].Selected = false;
-                    MessageBox.Show("?„ h?y ch?n", "ThÙng b·o");
+                    MessageBox.Show("?√£ h?y ch?n", "Th√¥ng b√°o");
                 }
             };
             pnlButtons.Controls.Add(btnCancel);
 
             Button btnRefresh = new Button()
             {
-                Text = "L‡m m?i",
+                Text = "L√†m m·ªõi",
                 Location = new System.Drawing.Point(235, 12),
                 Size = new System.Drawing.Size(100, 25),
                 BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
@@ -156,17 +156,17 @@ namespace CourseRegistrationClient
             dgvCourses.Font = new System.Drawing.Font("Segoe UI", 10);
             dgvCourses.RowTemplate.Height = 28;
 
-            dgvCourses.Columns.Add("CourseId", "M„ mÙn");
+            dgvCourses.Columns.Add("CourseId", "M√£ m√¥n");
             dgvCourses.Columns[0].Width = 100;
-            dgvCourses.Columns.Add("CourseName", "TÍn mÙn");
+            dgvCourses.Columns.Add("CourseName", "T√™n m√¥n");
             dgvCourses.Columns[1].Width = 350;
-            dgvCourses.Columns.Add("Credits", "TÌn ch?");
+            dgvCourses.Columns.Add("Credits", "T√≠n ch·ªâ");
             dgvCourses.Columns[2].Width = 80;
-            dgvCourses.Columns.Add("AvailableSlots", "Ch? tr?ng");
+            dgvCourses.Columns.Add("AvailableSlots", "Ch·ªó tr·ªëng");
             dgvCourses.Columns[3].Width = 100;
 
             ContextMenuStrip cms = new ContextMenuStrip();
-            ToolStripMenuItem registerItem = new ToolStripMenuItem("??ng k˝");
+            ToolStripMenuItem registerItem = new ToolStripMenuItem("ƒêƒÉng k√Ω");
             registerItem.Click += (s, e) => RegisterCourse();
             cms.Items.Add(registerItem);
             dgvCourses.ContextMenuStrip = cms;
@@ -186,7 +186,7 @@ namespace CourseRegistrationClient
 
             Button btnRefresh = new Button()
             {
-                Text = "L‡m m?i",
+                Text = "L√†m m·ªõi",
                 Location = new System.Drawing.Point(15, 12),
                 Size = new System.Drawing.Size(100, 25),
                 BackColor = System.Drawing.Color.FromArgb(0, 123, 255),
@@ -208,11 +208,11 @@ namespace CourseRegistrationClient
             dgvRegistrations.Font = new System.Drawing.Font("Segoe UI", 10);
             dgvRegistrations.RowTemplate.Height = 28;
 
-            dgvRegistrations.Columns.Add("CourseId", "M„ MÙn");
+            dgvRegistrations.Columns.Add("CourseId", "M√£ M√¥n");
             dgvRegistrations.Columns[0].Width = 100;
-            dgvRegistrations.Columns.Add("CourseName", "TÍn MÙn");
+            dgvRegistrations.Columns.Add("CourseName", "T√™n M√¥n");
             dgvRegistrations.Columns[1].Width = 400;
-            dgvRegistrations.Columns.Add("Credits", "TÌn Ch?");
+            dgvRegistrations.Columns.Add("Credits", "T√≠n Ch·ªâ");
             dgvRegistrations.Columns[2].Width = 80;
 
             tab.Controls.Add(dgvRegistrations);
@@ -232,15 +232,15 @@ namespace CourseRegistrationClient
             dgvSchedule.Font = new System.Drawing.Font("Segoe UI", 10);
             dgvSchedule.RowTemplate.Height = 28;
 
-            dgvSchedule.Columns.Add("CourseId", "M„ MÙn");
+            dgvSchedule.Columns.Add("CourseId", "M√£ M√¥n");
             dgvSchedule.Columns[0].Width = 100;
-            dgvSchedule.Columns.Add("CourseName", "TÍn MÙn");
+            dgvSchedule.Columns.Add("CourseName", "T√™n M√¥n");
             dgvSchedule.Columns[1].Width = 350;
-            dgvSchedule.Columns.Add("Credits", "TÌn Ch?");
+            dgvSchedule.Columns.Add("Credits", "T√≠n Ch·ªâ");
             dgvSchedule.Columns[2].Width = 80;
-            dgvSchedule.Columns.Add("ClassTime", "Gi? h?c");
+            dgvSchedule.Columns.Add("ClassTime", "Gi·ªù h·ªçc");
             dgvSchedule.Columns[3].Width = 100;
-            dgvSchedule.Columns.Add("Room", "PhÚng h?c");
+            dgvSchedule.Columns.Add("Room", "Ph√≤ng h·ªçc");
             dgvSchedule.Columns[4].Width = 100;
 
             tab.Controls.Add(dgvSchedule);
@@ -256,7 +256,7 @@ namespace CourseRegistrationClient
         {
             if (dgvCourses.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lÚng ch?n mÙn c?n ??ng k˝", "L?i");
+                MessageBox.Show("Vui l√≤ng ch·ªçn m√¥n c·∫ßn ƒëƒÉng k√Ω", "L·ªói");
                 return;
             }
 
@@ -266,14 +266,14 @@ namespace CourseRegistrationClient
             string response = clientSocket.SendRequest($"REGISTER|{studentId}|{courseId}");
             if (response.StartsWith("SUCCESS"))
             {
-                MessageBox.Show($"??ng k˝ mÙn {courseName} th‡nh cÙng", "Th‡nh cÙng");
+                MessageBox.Show($"ƒêƒÉng k√Ω m√¥n {courseName} th√†nh c√¥ng", "Th√†nh c√¥ng");
                 LoadCoursesData();
                 LoadRegistrationsData();
             }
             else
             {
                 string errorMsg = response.StartsWith("ERROR") ? response.Substring(6) : response;
-                MessageBox.Show("L?i: " + errorMsg, "L?i");
+                MessageBox.Show("L·ªói: " + errorMsg, "L·ªói");
             }
         }
 

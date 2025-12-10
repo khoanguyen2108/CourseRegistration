@@ -30,5 +30,13 @@
     "Role": "Student",
     "FullName": "dang khoa",
     "CreatedAt": "2025-12-09T08:12:55.9488335+07:00"
+  },
+  {
+    "UserId": "SV488867",
+    "Username": "1",
+    "Password": "1",
+    "Role": "Student",
+    "FullName": "1",
+    "CreatedAt": "2025-12-11T02:14:55.4498788+07:00"
   }
 ]
