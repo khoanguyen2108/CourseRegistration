@@ -38,13 +38,13 @@ namespace CourseRegistrationClient
             // Top toolbar
             Panel toolbar = new Panel();
             toolbar.Dock = DockStyle.Top;
-            toolbar.Height = 50;
+            toolbar.Height = 40;
             toolbar.BackColor = Color.FromArgb(0, 123, 255);
             this.Controls.Add(toolbar);
 
             Label lblTitle = new Label();
-            lblTitle.Text = "QUẢN TRỊ VIÊN - " + fullName;
-            lblTitle.Location = new Point(20, 12);
+            lblTitle.Text = "QUẢN TRỊ VIÊN" ;
+            lblTitle.Location = new Point(20, 8);
             lblTitle.Font = new Font("Microsoft Sans Serif", 14, FontStyle.Bold);
             lblTitle.ForeColor = Color.White;
             lblTitle.AutoSize = true;
@@ -52,7 +52,7 @@ namespace CourseRegistrationClient
 
             Button btnLogout = new Button();
             btnLogout.Text = "Đăng xuất";
-            btnLogout.Location = new Point(1050, 8);
+            btnLogout.Location = new Point(1050, 3);
             btnLogout.Size = new Size(120, 35);
             btnLogout.BackColor = Color.FromArgb(220, 53, 69);
             btnLogout.ForeColor = Color.White;
@@ -115,7 +115,7 @@ namespace CourseRegistrationClient
             // Nút Thêm môn (mở popup)
             Button btnAddCourse = new Button()
             {
-                Text = "➕ THÊM MÔN MỚI",
+                Text = "➕ THÊM MÔN",
                 Location = new Point(15, 15),
                 Size = new Size(150, 40),
                 BackColor = Color.FromArgb(40, 167, 69),
@@ -159,25 +159,36 @@ namespace CourseRegistrationClient
             dgvCourses.AllowUserToAddRows = false;
             dgvCourses.BackgroundColor = Color.White;
             dgvCourses.GridColor = Color.LightGray;
-            dgvCourses.ColumnHeadersHeight = 40;
+            dgvCourses.ColumnHeadersHeight = 135; // *** ĐÃ CHỈNH SỬA: Chiều cao tiêu đề cột giảm xuống 30 ***
             dgvCourses.Font = new Font("Microsoft Sans Serif", 10);
-            dgvCourses.RowTemplate.Height = 35;
+            dgvCourses.RowTemplate.Height = 30; // Đã chỉnh sửa từ 35 xuống 25
             dgvCourses.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
             dgvCourses.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
             dgvCourses.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvCourses.EnableHeadersVisualStyles = false;
             dgvCourses.SelectionChanged += DgvCourses_SelectionChanged; // NEW: Load SV khi chọn môn
 
+            // Đảm bảo tiêu đề cột được căn giữa 
+            dgvCourses.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            // ... (các thiết lập cột)
+
             dgvCourses.Columns.Add("CourseId", "MÃ MÔN");
-            dgvCourses.Columns[0].Width = 120;
+            dgvCourses.Columns[0].Width = 231;
+            dgvCourses.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
             dgvCourses.Columns.Add("CourseName", "TÊN MÔN HỌC");
-            dgvCourses.Columns[1].Width = 300;
+            dgvCourses.Columns[1].Width = 440;
+            dgvCourses.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
             dgvCourses.Columns.Add("Credits", "TÍN CHỈ");
-            dgvCourses.Columns[2].Width = 100;
+            dgvCourses.Columns[2].Width = 231;
             dgvCourses.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
             dgvCourses.Columns.Add("AvailableSlots", "CHỖ TRỐNG");
-            dgvCourses.Columns[3].Width = 100;
+            dgvCourses.Columns[3].Width = 231;
             dgvCourses.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
 
             dgvCourses.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
             topPanel.Controls.Add(dgvCourses);

@@ -3,7 +3,7 @@
   "WorkspaceRootPath": "D:\\TCP_CourseRegistration\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|D:\\TCP_CourseRegistration\\courseregistrationclient\\adminform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|d:\\tcp_courseregistration\\courseregistrationclient\\adminform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\adminform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -27,7 +27,7 @@
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|d:\\tcp_courseregistration\\courseregistrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|D:\\TCP_CourseRegistration\\courseregistrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -35,7 +35,7 @@
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|d:\\tcp_courseregistration\\courseregistrationclient\\loginform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|D:\\TCP_CourseRegistration\\courseregistrationclient\\loginform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\loginform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -47,15 +47,15 @@
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\addcourseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|d:\\tcp_courseregistration\\courseregistrationclient\\addcourseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|D:\\TCP_CourseRegistration\\courseregistrationclient\\addcourseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\addcourseform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|d:\\tcp_courseregistration\\courseregistrationclient\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|D:\\TCP_CourseRegistration\\courseregistrationclient\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|d:\\tcp_courseregistration\\courseregistrationclient\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|D:\\TCP_CourseRegistration\\courseregistrationclient\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{22DAE89F-FFF3-4935-912D-0BDD010EEE5A}|CourseRegistrationClient\\CourseRegistrationClient.csproj|solutionrelative:courseregistrationclient\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
@@ -110,11 +110,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AdminForm.cs",
+              "DocumentMoniker": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\AdminForm.cs",
+              "RelativeDocumentMoniker": "CourseRegistrationClient\\AdminForm.cs",
+              "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\AdminForm.cs",
+              "RelativeToolTip": "CourseRegistrationClient\\AdminForm.cs",
+              "ViewState": "AgIAAJYAAAAAAAAAAAAqwKEAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-09T11:22:35.092Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -126,8 +139,7 @@
               "RelativeToolTip": "CourseRegistrationServer\\Registration.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T16:13:28.3Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T16:13:28.3Z"
             },
             {
               "$type": "Document",
@@ -143,19 +155,6 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AdminForm.cs",
-              "DocumentMoniker": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\AdminForm.cs",
-              "RelativeDocumentMoniker": "CourseRegistrationClient\\AdminForm.cs",
-              "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\AdminForm.cs",
-              "RelativeToolTip": "CourseRegistrationClient\\AdminForm.cs",
-              "ViewState": "AgIAAIsDAAAAAAAAAAAkwJoDAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T11:22:35.092Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 3,
               "Title": "FileDataManager.cs",
               "DocumentMoniker": "D:\\TCP_CourseRegistration\\CourseRegistrationServer\\FileDataManager.cs",
@@ -164,8 +163,7 @@
               "RelativeToolTip": "CourseRegistrationServer\\FileDataManager.cs",
               "ViewState": "AgIAALkAAAAAAAAAAAAAAMcAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T17:25:50.678Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T17:25:50.678Z"
             },
             {
               "$type": "Document",
@@ -177,8 +175,7 @@
               "RelativeToolTip": "CourseRegistrationServer\\Course.cs",
               "ViewState": "AgIAAAgAAAAAAAAAAAA9wA0AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T16:12:06.387Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T16:12:06.387Z"
             },
             {
               "$type": "Document",
@@ -190,8 +187,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\LoginForm.cs",
               "ViewState": "AgIAADMAAAAAAAAAAAAcwHMAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T00:45:00.718Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-09T00:45:00.718Z"
             },
             {
               "$type": "Document",
@@ -203,8 +199,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-10T18:16:01.846Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-10T18:16:01.846Z"
             },
             {
               "$type": "Document",
@@ -215,8 +210,7 @@
               "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\LoginForm.cs [Design]",
               "RelativeToolTip": "CourseRegistrationClient\\LoginForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T11:46:55.466Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-09T11:46:55.466Z"
             },
             {
               "$type": "Document",
@@ -228,8 +222,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\LoginForm.Designer.cs",
               "ViewState": "AgIAADkAAAAAAAAAAAAowEwAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-10T18:28:39.108Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-10T18:28:39.108Z"
             },
             {
               "$type": "Document",
@@ -241,8 +234,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\App.config",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-12-10T18:16:10.094Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-10T18:16:10.094Z"
             },
             {
               "$type": "Document",
@@ -254,8 +246,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\Form1.cs",
               "ViewState": "AgIAAB0AAAAAAAAAAAAEwCEAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T16:15:36.343Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T16:15:36.343Z"
             },
             {
               "$type": "Document",
@@ -266,8 +257,7 @@
               "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\AddCourseForm.cs [Design]",
               "RelativeToolTip": "CourseRegistrationClient\\AddCourseForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-10T18:11:39.865Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-10T18:11:39.865Z"
             },
             {
               "$type": "Document",
@@ -279,8 +269,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\AddCourseForm.cs",
               "ViewState": "AgIAAFYAAAAAAAAAAAAwwFYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-10T18:00:03.853Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-10T18:00:03.853Z"
             },
             {
               "$type": "Document",
@@ -292,8 +281,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\packages.config",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-12-10T18:16:05.593Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-10T18:16:05.593Z"
             },
             {
               "$type": "Document",
@@ -305,8 +293,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\StudentForm.cs",
               "ViewState": "AgIAAEUBAAAAAAAAAAAAwFIBAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T01:46:02.92Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-09T01:46:02.92Z"
             },
             {
               "$type": "Document",
@@ -318,8 +305,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\RegisterForm.cs",
               "ViewState": "AgIAAIMAAAAAAAAAAAAwwGIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T00:45:11.26Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-09T00:45:11.26Z"
             },
             {
               "$type": "Document",
@@ -330,8 +316,7 @@
               "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\RegisterForm.cs [Design]",
               "RelativeToolTip": "CourseRegistrationClient\\RegisterForm.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-09T11:47:23.637Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-09T11:47:23.637Z"
             },
             {
               "$type": "Document",
@@ -342,8 +327,7 @@
               "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\Form1.resx",
               "RelativeToolTip": "CourseRegistrationClient\\Form1.resx",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2025-12-08T16:17:33.926Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T16:17:33.926Z"
             },
             {
               "$type": "Document",
@@ -355,8 +339,7 @@
               "RelativeToolTip": "CourseRegistrationClient\\Form1.Designer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T16:15:47.137Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-08T16:15:47.137Z"
             },
             {
               "$type": "Document",
@@ -367,8 +350,7 @@
               "ToolTip": "D:\\TCP_CourseRegistration\\CourseRegistrationClient\\Form1.cs [Design]",
               "RelativeToolTip": "CourseRegistrationClient\\Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-08T16:09:52.649Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-12-08T16:09:52.649Z"
             },
             {
               "$type": "Document",
