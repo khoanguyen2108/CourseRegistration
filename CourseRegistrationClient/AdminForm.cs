@@ -116,11 +116,24 @@ namespace CourseRegistrationClient
             buttonPanel.BorderStyle = BorderStyle.FixedSingle;
             topPanel.Controls.Add(buttonPanel);
 
+            // Nút Quản lý sinh viên
+            btnManageStudents = new Button()
+            {
+                Text = "QUẢN LÝ",
+                Location = new Point(15, 43),
+                Size = new Size(130, 30),
+                BackColor = Color.FromArgb(255, 193, 7),
+                ForeColor = Color.Black,
+                Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
+            };
+            btnManageStudents.Click += BtnManageStudents_Click;
+            buttonPanel.Controls.Add(btnManageStudents);
+
             // Nút Thêm môn
             Button btnAddCourse = new Button()
             {
                 Text = "THÊM MÔN",
-                Location = new Point(15, 43),
+                Location = new Point(150, 43),
                 Size = new Size(130, 30),
                 BackColor = Color.FromArgb(40, 167, 69),
                 ForeColor = Color.White,
@@ -133,7 +146,7 @@ namespace CourseRegistrationClient
             Button btnDeleteCourse = new Button()
             {
                 Text = "XÓA MÔN",
-                Location = new Point(150, 43),
+                Location = new Point(285, 43),
                 Size = new Size(130, 30),
                 BackColor = Color.FromArgb(220, 53, 69),
                 ForeColor = Color.White,
@@ -142,19 +155,7 @@ namespace CourseRegistrationClient
             btnDeleteCourse.Click += BtnDeleteCourse_Click;
             buttonPanel.Controls.Add(btnDeleteCourse);
 
-            // Nút Quản lý sinh viên
-            btnManageStudents = new Button()
-            {
-                Text = "QUẢN LÝ",
-                Location = new Point(285, 43),
-                Size = new Size(130, 30),
-                BackColor = Color.FromArgb(255, 193, 7),
-                ForeColor = Color.Black,
-                Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
-            };
-            btnManageStudents.Click += BtnManageStudents_Click;
-            buttonPanel.Controls.Add(btnManageStudents);
-
+            
             // Nút Làm mới
             Button btnRefreshCourses = new Button()
             {
@@ -279,8 +280,8 @@ namespace CourseRegistrationClient
                 Text = "QUAY LẠI",
                 Location = new Point(15, 44),
                 Size = new Size(130, 30),
-                BackColor = Color.FromArgb(108, 117, 125),
-                ForeColor = Color.White,
+                BackColor = Color.FromArgb(255, 193, 7),
+                ForeColor = Color.Black,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
             };
             btnBackToCourses.Click += BtnBackToCourses_Click;
@@ -351,9 +352,9 @@ namespace CourseRegistrationClient
             dgvAllStudents.EnableHeadersVisualStyles = false;
 
             dgvAllStudents.Columns.Add("UserId", "ID");
-            dgvAllStudents.Columns[0].Width = 150;
+            dgvAllStudents.Columns[0].Width = 155;
             dgvAllStudents.Columns.Add("Username", "TÊN ĐĂNG NHẬP");
-            dgvAllStudents.Columns[1].Width = 250;
+            dgvAllStudents.Columns[1].Width = 410;
             dgvAllStudents.Columns.Add("FullName", "HỌ TÊN");
             dgvAllStudents.Columns[2].Width = 410;
 
@@ -367,15 +368,9 @@ namespace CourseRegistrationClient
 
             // Nút đổi mật khẩu
             DataGridViewButtonColumn btnChangePass = new DataGridViewButtonColumn();
-            btnChangePass.HeaderText = "MẬT KHẨU";
-            btnChangePass.Text = "ĐỔI MK";
             btnChangePass.UseColumnTextForButtonValue = true;
-            btnChangePass.Width = 165;
-            dgvAllStudents.Columns.Add(btnChangePass);
-
             dgvAllStudents.CellClick += DgvAllStudents_CellClick;
             dgvAllStudents.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
-
             studentsPanel.Controls.Add(dgvAllStudents);
         }
 
@@ -442,53 +437,150 @@ namespace CourseRegistrationClient
             string username = dgvAllStudents.Rows[e.RowIndex].Cells[1].Value.ToString();
             string fullName = dgvAllStudents.Rows[e.RowIndex].Cells[2].Value.ToString();
 
-            // Nút Sửa thông tin
+            // Nút Sửa thông tin (cột 3) - GIỜ GỘP CẢ ĐỔI MẬT KHẨU
             if (e.ColumnIndex == 3)
             {
                 using (var editForm = new Form())
                 {
-                    editForm.Text = "Chỉnh sửa thông tin sinh viên";
-                    editForm.Size = new Size(500, 250);
+                    editForm.Text = "Sửa thông tin sinh viên";
+                    editForm.Size = new Size(500, 380);
                     editForm.StartPosition = FormStartPosition.CenterParent;
                     editForm.Font = new Font("Microsoft Sans Serif", 10);
+                    editForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+                    editForm.MaximizeBox = false;
 
-                    var lblName = new Label { Text = "Họ tên:", Location = new Point(30, 30), Size = new Size(100, 25) };
-                    var txtName = new TextBox { Location = new Point(150, 30), Size = new Size(300, 25), Text = fullName };
+                    // === PHẦN 1: THÔNG TIN CÁ NHÂN ===
+                    var lblPersonal = new Label
+                    {
+                        Text = "Thông tin cá nhân:",
+                        Location = new Point(30, 20),
+                        Size = new Size(200, 25),
+                        Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold),
+                        ForeColor = Color.FromArgb(52, 152, 219)
+                    };
 
+                    var lblName = new Label { Text = "Họ tên:", Location = new Point(30, 50), Size = new Size(100, 25) };
+                    var txtName = new TextBox { Location = new Point(150, 50), Size = new Size(300, 25), Text = fullName };
+                    // === PHẦN 2: THAY ĐỔI MẬT KHẨU (TÙY CHỌN) ===
+                    var lblPassword = new Label
+                    {
+                        Text = "Thay đổi mật khẩu:",
+                        Location = new Point(30, 90),
+                        Size = new Size(300, 25),
+                        Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold),
+                        ForeColor = Color.FromArgb(52, 152, 219)
+                    };
+
+                    // XÓA DÒNG NHẬP MẬT KHẨU HIỆN TẠI
+                    var lblNewPass = new Label { Text = "Mật khẩu mới:", Location = new Point(30, 120), Size = new Size(120, 25) }; // Dời lên từ 150 -> 120
+                    var txtNewPass = new TextBox { Location = new Point(150, 120), Size = new Size(300, 25), UseSystemPasswordChar = true };
+
+                    var lblConfirmPass = new Label { Text = "Xác nhận mật khẩu:", Location = new Point(30, 150), Size = new Size(120, 25) }; // Dời lên từ 180 -> 150
+                    var txtConfirmPass = new TextBox { Location = new Point(150, 150), Size = new Size(300, 25), UseSystemPasswordChar = true };
+
+                    // Ghi chú
+                    var lblNote = new Label
+                    {
+                        Text = "* Để trống nếu không muốn đổi",
+                        Location = new Point(30, 180), // Dời lên từ 210 -> 180
+                        Size = new Size(400, 20),
+                        Font = new Font("Microsoft Sans Serif", 8, FontStyle.Italic),
+                        ForeColor = Color.Gray
+                    };
+
+                    // === NÚT BẤM ===
                     var btnSave = new Button
                     {
                         Text = "LƯU THAY ĐỔI",
-                        Location = new Point(150, 80),
+                        Location = new Point(150, 220), // Dời lên từ 250 -> 220
                         Size = new Size(150, 40),
                         BackColor = Color.FromArgb(40, 167, 69),
                         ForeColor = Color.White,
-                        Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
+                        Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold),
+                        Cursor = Cursors.Hand
                     };
 
                     var btnCancel = new Button
                     {
                         Text = "HỦY",
-                        Location = new Point(320, 80),
+                        Location = new Point(320, 220), // Dời lên từ 250 -> 220
                         Size = new Size(130, 40),
                         BackColor = Color.FromArgb(108, 117, 125),
-                        ForeColor = Color.White
+                        ForeColor = Color.White,
+                        Cursor = Cursors.Hand
                     };
 
+                    // === XỬ LÝ SỰ KIỆN LƯU ===
                     btnSave.Click += (s, ev) =>
                     {
-                        if (string.IsNullOrEmpty(txtName.Text))
+                        // Kiểm tra thông tin bắt buộc
+                        if (string.IsNullOrWhiteSpace(txtName.Text))
                         {
                             MessageBox.Show("Vui lòng nhập họ tên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            txtName.Focus();
                             return;
                         }
 
-                        string response = clientSocket.SendRequest($"UPDATE_USER|{userId}|{txtName.Text.Trim()}|");
+                        // Kiểm tra nếu có nhập thông tin mật khẩu
+                        bool hasPasswordInput = !string.IsNullOrWhiteSpace(txtNewPass.Text) ||
+                                               !string.IsNullOrWhiteSpace(txtConfirmPass.Text);
+
+                        string newPassword = "";
+
+                        if (hasPasswordInput)
+                        {
+                            // Kiểm tra đầy đủ các trường mật khẩu
+                            if (string.IsNullOrWhiteSpace(txtNewPass.Text))
+                            {
+                                MessageBox.Show("Vui lòng nhập mật khẩu mới!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                txtNewPass.Focus();
+                                return;
+                            }
+
+                            if (txtNewPass.Text.Length < 6)
+                            {
+                                MessageBox.Show("Mật khẩu mới phải có ít nhất 6 ký tự!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                txtNewPass.Focus();
+                                return;
+                            }
+
+                            if (txtNewPass.Text != txtConfirmPass.Text)
+                            {
+                                MessageBox.Show("Mật khẩu xác nhận không khớp!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                txtConfirmPass.Focus();
+                                return;
+                            }
+
+                            newPassword = txtNewPass.Text.Trim();
+                        }
+
+                        // Gửi request cập nhật
+                        string response;
+                        if (string.IsNullOrEmpty(newPassword))
+                        {
+                            // Chỉ cập nhật thông tin, không đổi mật khẩu
+                            response = clientSocket.SendRequest($"UPDATE_USER|{userId}|{txtName.Text.Trim()}|");
+                        }
+                        else
+                        {
+                            // Cập nhật cả thông tin và mật khẩu
+                            response = clientSocket.SendRequest($"UPDATE_USER|{userId}|{txtName.Text.Trim()}|{newPassword}");
+                        }
 
                         if (response.StartsWith("SUCCESS"))
                         {
-                            MessageBox.Show("Cập nhật thông tin thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            string message = "Cập nhật thông tin thành công!";
+                            if (!string.IsNullOrEmpty(newPassword))
+                            {
+                                message += "\nMật khẩu đã được đổi thành công.";
+                            }
+
+                            MessageBox.Show(message, "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            // Làm mới danh sách
                             LoadAllStudentsData();
                             editForm.DialogResult = DialogResult.OK;
+                            editForm.Close();
                         }
                         else
                         {
@@ -497,75 +589,19 @@ namespace CourseRegistrationClient
                     };
 
                     btnCancel.Click += (s, ev) => editForm.Close();
-                    editForm.Controls.AddRange(new Control[] { lblName, txtName, btnSave, btnCancel });
+
+                    // Thêm tất cả control vào form
+                    editForm.Controls.AddRange(new Control[] {
+                lblPersonal,
+                lblName, txtName,
+                lblPassword,
+                lblNewPass, txtNewPass,
+                lblConfirmPass, txtConfirmPass,
+                lblNote,
+                btnSave, btnCancel
+            });
+
                     editForm.ShowDialog();
-                }
-            }
-            // Nút Đổi mật khẩu
-            else if (e.ColumnIndex == 4)
-            {
-                using (var passForm = new Form())
-                {
-                    passForm.Text = "Đổi mật khẩu sinh viên";
-                    passForm.Size = new Size(500, 250);
-                    passForm.StartPosition = FormStartPosition.CenterParent;
-                    passForm.Font = new Font("Microsoft Sans Serif", 10);
-
-                    var lblPass = new Label { Text = "Mật khẩu mới:", Location = new Point(30, 30), Size = new Size(120, 25) };
-                    var txtPass = new TextBox { Location = new Point(150, 30), Size = new Size(300, 25), UseSystemPasswordChar = true };
-
-                    var lblConfirm = new Label { Text = "Xác nhận:", Location = new Point(30, 70), Size = new Size(120, 25) };
-                    var txtConfirm = new TextBox { Location = new Point(150, 70), Size = new Size(300, 25), UseSystemPasswordChar = true };
-
-                    var btnSave = new Button
-                    {
-                        Text = "ĐỔI MẬT KHẨU",
-                        Location = new Point(150, 120),
-                        Size = new Size(150, 40),
-                        BackColor = Color.FromArgb(40, 167, 69),
-                        ForeColor = Color.White,
-                        Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
-                    };
-
-                    var btnCancel = new Button
-                    {
-                        Text = "HỦY",
-                        Location = new Point(320, 120),
-                        Size = new Size(130, 40),
-                        BackColor = Color.FromArgb(108, 117, 125),
-                        ForeColor = Color.White
-                    };
-
-                    btnSave.Click += (s, ev) =>
-                    {
-                        if (string.IsNullOrEmpty(txtPass.Text))
-                        {
-                            MessageBox.Show("Vui lòng nhập mật khẩu mới!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-
-                        if (txtPass.Text != txtConfirm.Text)
-                        {
-                            MessageBox.Show("Mật khẩu xác nhận không khớp!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-
-                        string response = clientSocket.SendRequest($"UPDATE_USER|{userId}||{txtPass.Text.Trim()}");
-
-                        if (response.StartsWith("SUCCESS"))
-                        {
-                            MessageBox.Show("Đổi mật khẩu thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            passForm.DialogResult = DialogResult.OK;
-                        }
-                        else
-                        {
-                            MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    };
-
-                    btnCancel.Click += (s, ev) => passForm.Close();
-                    passForm.Controls.AddRange(new Control[] { lblPass, txtPass, lblConfirm, txtConfirm, btnSave, btnCancel });
-                    passForm.ShowDialog();
                 }
             }
         }

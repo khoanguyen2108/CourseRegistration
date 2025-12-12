@@ -10,9 +10,9 @@
   {
     "UserId": "SV001",
     "Username": "student",
-    "Password": "student123",
+    "Password": "111111",
     "Role": "Student",
-    "FullName": "Sinh viên 001",
+    "FullName": "Nguyễn Phạm Đăng Khoa",
     "CreatedAt": "2025-12-09T07:48:01.5489473+07:00"
   },
   {
@@ -38,5 +38,13 @@
     "Role": "Student",
     "FullName": "1",
     "CreatedAt": "2025-12-11T02:14:55.4498788+07:00"
+  },
+  {
+    "UserId": "SV519057",
+    "Username": "namle123",
+    "Password": "123456",
+    "Role": "Student",
+    "FullName": "Lê Phước Nam",
+    "CreatedAt": "2025-12-12T23:22:36.8529041+07:00"
   }
 ]
