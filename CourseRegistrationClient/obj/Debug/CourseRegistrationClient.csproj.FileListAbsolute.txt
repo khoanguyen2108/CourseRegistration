@@ -11,3 +11,4 @@ D:\TCP_CourseRegistration\CourseRegistrationClient\obj\Debug\CourseRegistrationC
 D:\TCP_CourseRegistration\CourseRegistrationClient\obj\Debug\CourseRe.0EFB6C6C.Up2Date
 D:\TCP_CourseRegistration\CourseRegistrationClient\obj\Debug\CourseRegistrationClient.exe
 D:\TCP_CourseRegistration\CourseRegistrationClient\obj\Debug\CourseRegistrationClient.pdb
+D:\TCP_CourseRegistration\CourseRegistrationClient\obj\Debug\CourseRegistrationClient.LoginForm.resources

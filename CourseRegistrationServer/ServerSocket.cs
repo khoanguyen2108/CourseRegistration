@@ -192,6 +192,15 @@ namespace CourseRegistrationServer
                         string updatePassword = parts[3].Trim();
                         return userManager.UpdateUser(updateUserId, updateFullName, updatePassword);
 
+                    // ============ THÊM CASE MỚI ============
+                    case "DELETE_REGISTRATION":
+                        if (parts.Length < 3)
+                            return "ERROR|Định dạng sai";
+                        string deleteRegStudentId = parts[1].Trim();
+                        string deleteRegCourseId = parts[2].Trim();
+                        return DeleteRegistration(deleteRegStudentId, deleteRegCourseId);
+                    // =======================================
+
                     default:
                         return "ERROR|Lệnh không tồn tại: " + command;
                 }
@@ -328,6 +337,40 @@ namespace CourseRegistrationServer
                 return "SUCCESS|Xóa môn thành công!";
             }
         }
+
+        // ============ THÊM PHƯƠNG THỨC MỚI ============
+        private string DeleteRegistration(string studentId, string courseId)
+        {
+            lock (lockObject)
+            {
+                Console.WriteLine($"[SERVER] DELETE_REGISTRATION: Student={studentId}, Course={courseId}");
+
+                // Tìm đăng ký cần xóa
+                Registration regToDelete = registrations.FirstOrDefault(r =>
+                    r.StudentId == studentId && r.CourseId == courseId);
+
+                if (regToDelete == null)
+                {
+                    Console.WriteLine($"[ERROR] Không tìm thấy đăng ký của sinh viên {studentId} cho môn {courseId}");
+                    return "ERROR|Không tìm thấy đăng ký";
+                }
+
+                // Xóa đăng ký
+                registrations.Remove(regToDelete);
+
+                // Tăng số chỗ trống của môn học
+                Course course = courses.FirstOrDefault(c => c.CourseId == courseId);
+                if (course != null)
+                {
+                    course.AvailableSlots++;
+                    Console.WriteLine($"[SERVER] Tăng chỗ trống môn {courseId} lên {course.AvailableSlots}");
+                }
+
+                Console.WriteLine($"[SERVER] ✅ Đã xóa đăng ký của sinh viên {studentId} khỏi môn {courseId}");
+                return "SUCCESS|Đã xóa sinh viên khỏi môn học";
+            }
+        }
+        // =============================================
 
         private string GetAllUsers()
         {

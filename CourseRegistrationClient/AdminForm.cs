@@ -11,11 +11,16 @@ namespace CourseRegistrationClient
         private ClientSocket clientSocket;
         private string userId;
         private string fullName;
-        private TabControl tabControl;
+        private Panel mainPanel;
+        private SplitContainer splitContainer;
+        private Panel coursesPanel;
+        private Panel studentsPanel;
         private DataGridView dgvCourses;
-        private DataGridView dgvUsers;
-        private DataGridView dgvRegistrations;
-        private DataGridView dgvCourseStudents; // NEW: Hiển thị SV đăng ký môn
+        private DataGridView dgvCourseStudents;
+        private DataGridView dgvAllStudents;
+        private Button btnManageStudents;
+        private Button btnBackToCourses;
+        private bool showingStudents = false;
 
         public AdminForm(ClientSocket socket, string id, string name)
         {
@@ -24,11 +29,19 @@ namespace CourseRegistrationClient
             fullName = name;
 
             this.Text = "Admin - Hệ thống đăng ký Môn học";
-            this.Size = new Size(1200, 800); // Tăng chiều cao
+            this.Size = new Size(1200, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, ((byte)(0)));
 
             InitializeComponent();
+            this.Load += AdminForm_Load;
+            this.Shown += (s, e) => LoadAllData();
+        }
+
+        private void AdminForm_Load(object sender, EventArgs e)
+        {
+            LoadAllData();
+            Console.WriteLine("[DEBUG] AdminForm loaded, calling LoadAllData()");
         }
 
         private void InitializeComponent()
@@ -43,7 +56,7 @@ namespace CourseRegistrationClient
             this.Controls.Add(toolbar);
 
             Label lblTitle = new Label();
-            lblTitle.Text = "QUẢN TRỊ VIÊN" ;
+            lblTitle.Text = "QUẢN TRỊ VIÊN";
             lblTitle.Location = new Point(20, 8);
             lblTitle.Font = new Font("Microsoft Sans Serif", 14, FontStyle.Bold);
             lblTitle.ForeColor = Color.White;
@@ -60,45 +73,36 @@ namespace CourseRegistrationClient
             btnLogout.Click += (s, e) => { this.DialogResult = DialogResult.Cancel; this.Close(); };
             toolbar.Controls.Add(btnLogout);
 
-            // TabControl
-            tabControl = new TabControl();
-            tabControl.Dock = DockStyle.Fill;
-            tabControl.Font = new Font("Microsoft Sans Serif", 10);
-            this.Controls.Add(tabControl);
+            // Panel chính
+            mainPanel = new Panel();
+            mainPanel.Dock = DockStyle.Fill;
+            mainPanel.BackColor = Color.White;
+            this.Controls.Add(mainPanel);
 
-            // Tab 1: Quản lý Môn học
-            TabPage tabCourses = new TabPage("Quản lý Môn học");
-            tabCourses.BackColor = Color.White;
-            CreateCoursesTab(tabCourses);
-            tabControl.TabPages.Add(tabCourses);
+            // Tạo giao diện quản lý môn học (mặc định)
+            CreateCoursesInterface();
 
-            // Tab 2: Quản lý Sinh viên
-            TabPage tabUsers = new TabPage("Quản lý Sinh viên");
-            tabUsers.BackColor = Color.White;
-            CreateUsersTab(tabUsers);
-            tabControl.TabPages.Add(tabUsers);
-
-            // Tab 3: Xem Đăng ký Sinh viên
-            TabPage tabRegistrations = new TabPage("Xem Đăng ký Sinh viên");
-            tabRegistrations.BackColor = Color.White;
-            CreateRegistrationsTab(tabRegistrations);
-            tabControl.TabPages.Add(tabRegistrations);
+            // Tạo giao diện quản lý sinh viên (ẩn)
+            CreateStudentsInterface();
 
             this.ResumeLayout(false);
-
-            LoadAllData();
         }
 
-        private void CreateCoursesTab(TabPage tab)
+        private void CreateCoursesInterface()
         {
-            // Panel chính - Split container
-            SplitContainer splitContainer = new SplitContainer();
+            coursesPanel = new Panel();
+            coursesPanel.Dock = DockStyle.Fill;
+            coursesPanel.BackColor = Color.White;
+            mainPanel.Controls.Add(coursesPanel);
+
+            // Split container
+            splitContainer = new SplitContainer();
             splitContainer.Dock = DockStyle.Fill;
             splitContainer.Orientation = Orientation.Horizontal;
-            splitContainer.SplitterDistance = 400; // Môn học chiếm 400px
-            tab.Controls.Add(splitContainer);
+            splitContainer.SplitterDistance = 400;
+            coursesPanel.Controls.Add(splitContainer);
 
-            // Panel trên: Danh sách môn học + nút
+            // ========== PHẦN TRÊN: DANH SÁCH MÔN HỌC ==========
             Panel topPanel = new Panel();
             topPanel.Dock = DockStyle.Fill;
             topPanel.BackColor = Color.White;
@@ -106,18 +110,18 @@ namespace CourseRegistrationClient
 
             // Panel nút bấm
             Panel buttonPanel = new Panel();
-            buttonPanel.Height = 60;
+            buttonPanel.Height = 80;
             buttonPanel.Dock = DockStyle.Top;
             buttonPanel.BackColor = Color.FromArgb(248, 249, 250);
             buttonPanel.BorderStyle = BorderStyle.FixedSingle;
             topPanel.Controls.Add(buttonPanel);
 
-            // Nút Thêm môn (mở popup)
+            // Nút Thêm môn
             Button btnAddCourse = new Button()
             {
-                Text = "➕ THÊM MÔN",
-                Location = new Point(15, 15),
-                Size = new Size(150, 40),
+                Text = "THÊM MÔN",
+                Location = new Point(15, 43),
+                Size = new Size(130, 30),
                 BackColor = Color.FromArgb(40, 167, 69),
                 ForeColor = Color.White,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
@@ -125,12 +129,12 @@ namespace CourseRegistrationClient
             btnAddCourse.Click += BtnAddCoursePopup_Click;
             buttonPanel.Controls.Add(btnAddCourse);
 
-            // Nút Xóa môn đã chọn
+            // Nút Xóa môn
             Button btnDeleteCourse = new Button()
             {
-                Text = "🗑️ XÓA MÔN",
-                Location = new Point(180, 15),
-                Size = new Size(150, 40),
+                Text = "XÓA MÔN",
+                Location = new Point(150, 43),
+                Size = new Size(130, 30),
                 BackColor = Color.FromArgb(220, 53, 69),
                 ForeColor = Color.White,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
@@ -138,18 +142,32 @@ namespace CourseRegistrationClient
             btnDeleteCourse.Click += BtnDeleteCourse_Click;
             buttonPanel.Controls.Add(btnDeleteCourse);
 
+            // Nút Quản lý sinh viên
+            btnManageStudents = new Button()
+            {
+                Text = "QUẢN LÝ",
+                Location = new Point(285, 43),
+                Size = new Size(130, 30),
+                BackColor = Color.FromArgb(255, 193, 7),
+                ForeColor = Color.Black,
+                Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
+            };
+            btnManageStudents.Click += BtnManageStudents_Click;
+            buttonPanel.Controls.Add(btnManageStudents);
+
             // Nút Làm mới
             Button btnRefreshCourses = new Button()
             {
-                Text = "🔄 LÀM MỚI",
-                Location = new Point(345, 15),
-                Size = new Size(150, 40),
+                Text = "LÀM MỚI",
+                Location = new Point(420, 43),
+                Size = new Size(130, 30),
                 BackColor = Color.FromArgb(0, 123, 255),
                 ForeColor = Color.White,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
             };
             btnRefreshCourses.Click += (s, e) => LoadCoursesData();
             buttonPanel.Controls.Add(btnRefreshCourses);
+
 
             // DataGridView môn học
             dgvCourses = new DataGridView();
@@ -159,52 +177,47 @@ namespace CourseRegistrationClient
             dgvCourses.AllowUserToAddRows = false;
             dgvCourses.BackgroundColor = Color.White;
             dgvCourses.GridColor = Color.LightGray;
-            dgvCourses.ColumnHeadersHeight = 135; // *** ĐÃ CHỈNH SỬA: Chiều cao tiêu đề cột giảm xuống 30 ***
+            dgvCourses.ColumnHeadersHeight = 100;
             dgvCourses.Font = new Font("Microsoft Sans Serif", 10);
-            dgvCourses.RowTemplate.Height = 30; // Đã chỉnh sửa từ 35 xuống 25
+            dgvCourses.RowTemplate.Height = 30;
             dgvCourses.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
             dgvCourses.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
             dgvCourses.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvCourses.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
             dgvCourses.EnableHeadersVisualStyles = false;
-            dgvCourses.SelectionChanged += DgvCourses_SelectionChanged; // NEW: Load SV khi chọn môn
-
-            // Đảm bảo tiêu đề cột được căn giữa 
-            dgvCourses.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            // ... (các thiết lập cột)
+            dgvCourses.SelectionChanged += DgvCourses_SelectionChanged;
 
             dgvCourses.Columns.Add("CourseId", "MÃ MÔN");
             dgvCourses.Columns[0].Width = 231;
-            dgvCourses.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCourses.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
 
             dgvCourses.Columns.Add("CourseName", "TÊN MÔN HỌC");
-            dgvCourses.Columns[1].Width = 440;
-            dgvCourses.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCourses.Columns[1].Width = 448;
+            dgvCourses.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
 
             dgvCourses.Columns.Add("Credits", "TÍN CHỈ");
             dgvCourses.Columns[2].Width = 231;
-            dgvCourses.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvCourses.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
 
             dgvCourses.Columns.Add("AvailableSlots", "CHỖ TRỐNG");
             dgvCourses.Columns[3].Width = 231;
-            dgvCourses.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
+            dgvCourses.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
 
             dgvCourses.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
             topPanel.Controls.Add(dgvCourses);
 
-            // Panel dưới: Danh sách sinh viên đăng ký môn đã chọn
+            // ========== PHẦN DƯỚI: SINH VIÊN ĐĂNG KÝ MÔN ==========
             Panel bottomPanel = new Panel();
             bottomPanel.Dock = DockStyle.Fill;
             bottomPanel.BackColor = Color.White;
             splitContainer.Panel2.Controls.Add(bottomPanel);
 
-            // Label tiêu đề
+            // Tiêu đề
             Label lblStudents = new Label();
             lblStudents.Text = "SINH VIÊN ĐÃ ĐĂNG KÝ MÔN NÀY";
             lblStudents.Dock = DockStyle.Top;
             lblStudents.Height = 40;
-            lblStudents.Font = new Font("Microsoft Sans Serif", 11, FontStyle.Bold);
+            lblStudents.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Bold);
             lblStudents.ForeColor = Color.FromArgb(0, 123, 255);
             lblStudents.TextAlign = ContentAlignment.MiddleCenter;
             lblStudents.BackColor = Color.FromArgb(248, 249, 250);
@@ -219,385 +232,218 @@ namespace CourseRegistrationClient
             dgvCourseStudents.AllowUserToAddRows = false;
             dgvCourseStudents.BackgroundColor = Color.White;
             dgvCourseStudents.GridColor = Color.LightGray;
-            dgvCourseStudents.ColumnHeadersHeight = 35;
-            dgvCourseStudents.Font = new Font("Microsoft Sans Serif", 9);
+            dgvCourseStudents.ColumnHeadersHeight = 60;
+            dgvCourseStudents.Font = new Font("Microsoft Sans Serif", 10);
             dgvCourseStudents.RowTemplate.Height = 30;
+            dgvCourseStudents.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+            dgvCourseStudents.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
+            dgvCourseStudents.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvCourseStudents.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
+            dgvCourseStudents.EnableHeadersVisualStyles = false;
 
             dgvCourseStudents.Columns.Add("StudentId", "MÃ SV");
-            dgvCourseStudents.Columns[0].Width = 100;
+            dgvCourseStudents.Columns[0].Width = 250;
+            dgvCourseStudents.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
+
             dgvCourseStudents.Columns.Add("FullName", "HỌ TÊN");
-            dgvCourseStudents.Columns[1].Width = 250;
+            dgvCourseStudents.Columns[1].Width = 400;
+            dgvCourseStudents.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
+
             dgvCourseStudents.Columns.Add("Username", "TÀI KHOẢN");
-            dgvCourseStudents.Columns[2].Width = 150;
+            dgvCourseStudents.Columns[2].Width = 300;
+            dgvCourseStudents.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
 
             // Nút xóa sinh viên khỏi môn
             DataGridViewButtonColumn btnRemoveStudent = new DataGridViewButtonColumn();
             btnRemoveStudent.HeaderText = "THAO TÁC";
-            btnRemoveStudent.Text = "XÓA KHỎI MÔN";
+            btnRemoveStudent.Text = "XÓA";
             btnRemoveStudent.UseColumnTextForButtonValue = true;
-            btnRemoveStudent.Width = 150;
+            btnRemoveStudent.Width = 190;
             dgvCourseStudents.Columns.Add(btnRemoveStudent);
             dgvCourseStudents.CellClick += DgvCourseStudents_CellClick;
 
             bottomPanel.Controls.Add(dgvCourseStudents);
         }
 
-        private void CreateUsersTab(TabPage tab)
+        private void CreateStudentsInterface()
         {
-            // Panel chính
-            Panel mainPanel = new Panel();
-            mainPanel.Dock = DockStyle.Fill;
-            tab.Controls.Add(mainPanel);
+            studentsPanel = new Panel();
+            studentsPanel.Dock = DockStyle.Fill;
+            studentsPanel.BackColor = Color.White;
+            studentsPanel.Visible = false; // Ẩn ban đầu
+            mainPanel.Controls.Add(studentsPanel);
 
-            // Panel nút
+            // Nút quay lại
+            btnBackToCourses = new Button()
+            {
+                Text = "QUAY LẠI",
+                Location = new Point(15, 44),
+                Size = new Size(130, 30),
+                BackColor = Color.FromArgb(108, 117, 125),
+                ForeColor = Color.White,
+                Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
+            };
+            btnBackToCourses.Click += BtnBackToCourses_Click;
+            studentsPanel.Controls.Add(btnBackToCourses);
+
+            // Panel nút bấm
             Panel buttonPanel = new Panel();
-            buttonPanel.Height = 60;
+            buttonPanel.Height = 80;
             buttonPanel.Dock = DockStyle.Top;
             buttonPanel.BackColor = Color.FromArgb(248, 249, 250);
             buttonPanel.BorderStyle = BorderStyle.FixedSingle;
-            mainPanel.Controls.Add(buttonPanel);
+            studentsPanel.Controls.Add(buttonPanel);
 
             // Nút Thêm sinh viên
-            Button btnAddUser = new Button()
+            Button btnAddStudent = new Button()
             {
-                Text = "➕ THÊM SINH VIÊN",
-                Location = new Point(15, 15),
-                Size = new Size(180, 40),
+                Text = "THÊM SV",
+                Location = new Point(150, 43),
+                Size = new Size(130, 30),
                 BackColor = Color.FromArgb(40, 167, 69),
                 ForeColor = Color.White,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
             };
-            btnAddUser.Click += BtnAddUserPopup_Click;
-            buttonPanel.Controls.Add(btnAddUser);
+            btnAddStudent.Click += BtnAddUserPopup_Click;
+            buttonPanel.Controls.Add(btnAddStudent);
 
             // Nút Xóa sinh viên
-            Button btnDeleteUser = new Button()
+            Button btnDeleteStudent = new Button()
             {
-                Text = "🗑️ XÓA SINH VIÊN",
-                Location = new Point(210, 15),
-                Size = new Size(180, 40),
+                Text = "XÓA SV",
+                Location = new Point(285, 43),
+                Size = new Size(130, 30),
                 BackColor = Color.FromArgb(220, 53, 69),
                 ForeColor = Color.White,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
             };
-            btnDeleteUser.Click += BtnDeleteUser_Click;
-            buttonPanel.Controls.Add(btnDeleteUser);
+            btnDeleteStudent.Click += BtnDeleteUser_Click;
+            buttonPanel.Controls.Add(btnDeleteStudent);
 
             // Nút Làm mới
-            Button btnRefreshUsers = new Button()
+            Button btnRefreshStudents = new Button()
             {
-                Text = "🔄 LÀM MỚI",
-                Location = new Point(405, 15),
-                Size = new Size(150, 40),
+                Text = "LÀM MỚI",
+                Location = new Point(420, 43),
+                Size = new Size(130, 30),
                 BackColor = Color.FromArgb(0, 123, 255),
                 ForeColor = Color.White,
                 Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
             };
-            btnRefreshUsers.Click += (s, e) => LoadUsersData();
-            buttonPanel.Controls.Add(btnRefreshUsers);
+            btnRefreshStudents.Click += (s, e) => LoadAllStudentsData();
+            buttonPanel.Controls.Add(btnRefreshStudents);
 
-            // DataGridView sinh viên
-            dgvUsers = new DataGridView();
-            dgvUsers.Dock = DockStyle.Fill;
-            dgvUsers.AutoGenerateColumns = false;
-            dgvUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvUsers.AllowUserToAddRows = false;
-            dgvUsers.BackgroundColor = Color.White;
-            dgvUsers.GridColor = Color.LightGray;
-            dgvUsers.ColumnHeadersHeight = 40;
-            dgvUsers.Font = new Font("Microsoft Sans Serif", 10);
-            dgvUsers.RowTemplate.Height = 35;
-            dgvUsers.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
-            dgvUsers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
-            dgvUsers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvUsers.EnableHeadersVisualStyles = false;
+            // DataGridView tất cả sinh viên
+            dgvAllStudents = new DataGridView();
+            dgvAllStudents.Dock = DockStyle.Fill;
+            dgvAllStudents.AutoGenerateColumns = false;
+            dgvAllStudents.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvAllStudents.AllowUserToAddRows = false;
+            dgvAllStudents.BackgroundColor = Color.White;
+            dgvAllStudents.GridColor = Color.LightGray;
+            dgvAllStudents.ColumnHeadersHeight = 100;
+            dgvAllStudents.Font = new Font("Microsoft Sans Serif", 10);
+            dgvAllStudents.RowTemplate.Height = 30;
+            dgvAllStudents.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
+            dgvAllStudents.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
+            dgvAllStudents.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvAllStudents.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter;
+            dgvAllStudents.EnableHeadersVisualStyles = false;
 
-            dgvUsers.Columns.Add("UserId", "ID");
-            dgvUsers.Columns[0].Width = 80;
-            dgvUsers.Columns.Add("Username", "TÊN ĐĂNG NHẬP");
-            dgvUsers.Columns[1].Width = 180;
-            dgvUsers.Columns.Add("FullName", "HỌ TÊN");
-            dgvUsers.Columns[2].Width = 250;
+            dgvAllStudents.Columns.Add("UserId", "ID");
+            dgvAllStudents.Columns[0].Width = 150;
+            dgvAllStudents.Columns.Add("Username", "TÊN ĐĂNG NHẬP");
+            dgvAllStudents.Columns[1].Width = 250;
+            dgvAllStudents.Columns.Add("FullName", "HỌ TÊN");
+            dgvAllStudents.Columns[2].Width = 410;
 
             // Nút chỉnh sửa
             DataGridViewButtonColumn btnEdit = new DataGridViewButtonColumn();
             btnEdit.HeaderText = "CHỈNH SỬA";
             btnEdit.Text = "SỬA";
             btnEdit.UseColumnTextForButtonValue = true;
-            btnEdit.Width = 100;
-            dgvUsers.Columns.Add(btnEdit);
+            btnEdit.Width = 165;
+            dgvAllStudents.Columns.Add(btnEdit);
 
             // Nút đổi mật khẩu
             DataGridViewButtonColumn btnChangePass = new DataGridViewButtonColumn();
             btnChangePass.HeaderText = "MẬT KHẨU";
             btnChangePass.Text = "ĐỔI MK";
             btnChangePass.UseColumnTextForButtonValue = true;
-            btnChangePass.Width = 100;
-            dgvUsers.Columns.Add(btnChangePass);
+            btnChangePass.Width = 165;
+            dgvAllStudents.Columns.Add(btnChangePass);
 
-            dgvUsers.CellClick += DgvUsers_CellClick;
-            dgvUsers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
+            dgvAllStudents.CellClick += DgvAllStudents_CellClick;
+            dgvAllStudents.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
 
-            mainPanel.Controls.Add(dgvUsers);
+            studentsPanel.Controls.Add(dgvAllStudents);
         }
 
-        private void CreateRegistrationsTab(TabPage tab)
+        private void BtnManageStudents_Click(object sender, EventArgs e)
         {
-            // Panel chính
-            Panel mainPanel = new Panel();
-            mainPanel.Dock = DockStyle.Fill;
-            tab.Controls.Add(mainPanel);
-
-            // Panel nút
-            Panel buttonPanel = new Panel();
-            buttonPanel.Height = 60;
-            buttonPanel.Dock = DockStyle.Top;
-            buttonPanel.BackColor = Color.FromArgb(248, 249, 250);
-            buttonPanel.BorderStyle = BorderStyle.FixedSingle;
-            mainPanel.Controls.Add(buttonPanel);
-
-            Button btnRefresh = new Button()
-            {
-                Text = "🔄 LÀM MỚI",
-                Location = new Point(15, 15),
-                Size = new Size(150, 40),
-                BackColor = Color.FromArgb(0, 123, 255),
-                ForeColor = Color.White,
-                Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
-            };
-            btnRefresh.Click += (s, e) => LoadRegistrationsData();
-            buttonPanel.Controls.Add(btnRefresh);
-
-            // DataGridView
-            dgvRegistrations = new DataGridView();
-            dgvRegistrations.Dock = DockStyle.Fill;
-            dgvRegistrations.AutoGenerateColumns = false;
-            dgvRegistrations.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvRegistrations.AllowUserToAddRows = false;
-            dgvRegistrations.BackgroundColor = Color.White;
-            dgvRegistrations.GridColor = Color.LightGray;
-            dgvRegistrations.ColumnHeadersHeight = 40;
-            dgvRegistrations.Font = new Font("Microsoft Sans Serif", 10);
-            dgvRegistrations.RowTemplate.Height = 35;
-            dgvRegistrations.ColumnHeadersDefaultCellStyle.Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold);
-            dgvRegistrations.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(52, 152, 219);
-            dgvRegistrations.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvRegistrations.EnableHeadersVisualStyles = false;
-
-            dgvRegistrations.Columns.Add("RegistrationId", "ID");
-            dgvRegistrations.Columns[0].Width = 80;
-            dgvRegistrations.Columns.Add("UserId", "ID SINH VIÊN");
-            dgvRegistrations.Columns[1].Width = 120;
-            dgvRegistrations.Columns.Add("CourseId", "MÃ MÔN");
-            dgvRegistrations.Columns[2].Width = 100;
-            dgvRegistrations.Columns.Add("CourseName", "TÊN MÔN");
-            dgvRegistrations.Columns[3].Width = 250;
-            dgvRegistrations.Columns.Add("Credits", "TÍN CHỈ");
-            dgvRegistrations.Columns[4].Width = 100;
-            dgvRegistrations.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgvRegistrations.Columns.Add("Semester", "HỌC KỲ");
-            dgvRegistrations.Columns[5].Width = 120;
-            dgvRegistrations.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            dgvRegistrations.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 249, 250);
-            mainPanel.Controls.Add(dgvRegistrations);
+            showingStudents = true;
+            coursesPanel.Visible = false;
+            studentsPanel.Visible = true;
+            LoadAllStudentsData();
         }
 
-        // ========== CÁC SỰ KIỆN MỚI ==========
-
-        private void BtnAddCoursePopup_Click(object sender, EventArgs e)
+        private void BtnBackToCourses_Click(object sender, EventArgs e)
         {
-            // Tạo form popup thêm môn học
-            using (var addCourseForm = new Form())
-            {
-                addCourseForm.Text = "Thêm môn học mới";
-                addCourseForm.Size = new Size(500, 350);
-                addCourseForm.StartPosition = FormStartPosition.CenterParent;
-                addCourseForm.Font = new Font("Microsoft Sans Serif", 10);
-
-                // Controls
-                var lblId = new Label { Text = "Mã môn:", Location = new Point(30, 30), Size = new Size(100, 25) };
-                var txtId = new TextBox { Location = new Point(150, 30), Size = new Size(300, 25) };
-
-                var lblName = new Label { Text = "Tên môn:", Location = new Point(30, 70), Size = new Size(100, 25) };
-                var txtName = new TextBox { Location = new Point(150, 70), Size = new Size(300, 25) };
-
-                var lblCredits = new Label { Text = "Số tín chỉ:", Location = new Point(30, 110), Size = new Size(100, 25) };
-                var txtCredits = new TextBox { Location = new Point(150, 110), Size = new Size(100, 25) };
-
-                var lblSlots = new Label { Text = "Số chỗ trống:", Location = new Point(30, 150), Size = new Size(100, 25) };
-                var txtSlots = new TextBox { Location = new Point(150, 150), Size = new Size(100, 25) };
-
-                var btnSave = new Button
-                {
-                    Text = "LƯU MÔN HỌC",
-                    Location = new Point(150, 200),
-                    Size = new Size(150, 40),
-                    BackColor = Color.FromArgb(40, 167, 69),
-                    ForeColor = Color.White,
-                    Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
-                };
-
-                var btnCancel = new Button
-                {
-                    Text = "HỦY",
-                    Location = new Point(320, 200),
-                    Size = new Size(130, 40),
-                    BackColor = Color.FromArgb(108, 117, 125),
-                    ForeColor = Color.White
-                };
-
-                btnSave.Click += (s, ev) =>
-                {
-                    if (string.IsNullOrEmpty(txtId.Text) || string.IsNullOrEmpty(txtName.Text) ||
-                        string.IsNullOrEmpty(txtCredits.Text) || string.IsNullOrEmpty(txtSlots.Text))
-                    {
-                        MessageBox.Show("Vui lòng điền đầy đủ thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    string response = clientSocket.SendRequest($"ADD_COURSE|{txtId.Text.Trim()}|{txtName.Text.Trim()}|{txtCredits.Text.Trim()}|{txtSlots.Text.Trim()}");
-
-                    if (response.StartsWith("SUCCESS"))
-                    {
-                        MessageBox.Show("Thêm môn học thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadCoursesData();
-                        addCourseForm.DialogResult = DialogResult.OK;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                };
-
-                btnCancel.Click += (s, ev) => addCourseForm.Close();
-
-                addCourseForm.Controls.AddRange(new Control[] { lblId, txtId, lblName, txtName, lblCredits, txtCredits, lblSlots, txtSlots, btnSave, btnCancel });
-                addCourseForm.ShowDialog();
-            }
+            showingStudents = false;
+            studentsPanel.Visible = false;
+            coursesPanel.Visible = true;
         }
 
-        private void BtnAddUserPopup_Click(object sender, EventArgs e)
+        private void LoadAllData()
         {
-            // Tạo form popup thêm sinh viên (tương tự như thêm môn học)
-            using (var addUserForm = new Form())
-            {
-                addUserForm.Text = "Thêm sinh viên mới";
-                addUserForm.Size = new Size(500, 300);
-                addUserForm.StartPosition = FormStartPosition.CenterParent;
-                addUserForm.Font = new Font("Microsoft Sans Serif", 10);
-
-                var lblUser = new Label { Text = "Tài khoản:", Location = new Point(30, 30), Size = new Size(100, 25) };
-                var txtUser = new TextBox { Location = new Point(150, 30), Size = new Size(300, 25) };
-
-                var lblPass = new Label { Text = "Mật khẩu:", Location = new Point(30, 70), Size = new Size(100, 25) };
-                var txtPass = new TextBox { Location = new Point(150, 70), Size = new Size(300, 25), UseSystemPasswordChar = true };
-
-                var lblName = new Label { Text = "Họ tên:", Location = new Point(30, 110), Size = new Size(100, 25) };
-                var txtName = new TextBox { Location = new Point(150, 110), Size = new Size(300, 25) };
-
-                var btnSave = new Button
-                {
-                    Text = "LƯU SINH VIÊN",
-                    Location = new Point(150, 160),
-                    Size = new Size(150, 40),
-                    BackColor = Color.FromArgb(40, 167, 69),
-                    ForeColor = Color.White,
-                    Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
-                };
-
-                var btnCancel = new Button
-                {
-                    Text = "HỦY",
-                    Location = new Point(320, 160),
-                    Size = new Size(130, 40),
-                    BackColor = Color.FromArgb(108, 117, 125),
-                    ForeColor = Color.White
-                };
-
-                btnSave.Click += (s, ev) =>
-                {
-                    if (string.IsNullOrEmpty(txtUser.Text) || string.IsNullOrEmpty(txtPass.Text) || string.IsNullOrEmpty(txtName.Text))
-                    {
-                        MessageBox.Show("Vui lòng điền đầy đủ thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    string response = clientSocket.SendRequest($"REGISTER_USER|{txtUser.Text.Trim()}|{txtPass.Text.Trim()}|{txtName.Text.Trim()}");
-
-                    if (response.StartsWith("SUCCESS"))
-                    {
-                        MessageBox.Show("Thêm sinh viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadUsersData();
-                        addUserForm.DialogResult = DialogResult.OK;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                };
-
-                btnCancel.Click += (s, ev) => addUserForm.Close();
-                addUserForm.Controls.AddRange(new Control[] { lblUser, txtUser, lblPass, txtPass, lblName, txtName, btnSave, btnCancel });
-                addUserForm.ShowDialog();
-            }
+            LoadCoursesData();
         }
 
-        private void DgvCourses_SelectionChanged(object sender, EventArgs e)
+        private void LoadAllStudentsData()
         {
-            // Load danh sách sinh viên đăng ký môn đã chọn
-            if (dgvCourses.SelectedRows.Count > 0)
-            {
-                string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
-                LoadCourseStudents(courseId);
-            }
-        }
+            if (dgvAllStudents == null) return;
 
-        private void DgvCourseStudents_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Xử lý nút xóa sinh viên khỏi môn
-            if (e.ColumnIndex == 3 && e.RowIndex >= 0) // Cột "THAO TÁC"
+            string response = clientSocket.SendRequest("GET_ALL_USERS");
+            dgvAllStudents.Rows.Clear();
+
+            if (response.StartsWith("SUCCESS"))
             {
-                if (dgvCourses.SelectedRows.Count == 0)
+                try
                 {
-                    MessageBox.Show("Vui lòng chọn môn học trước!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    string json = response.Substring(8);
+                    if (json.Trim() != "[]")
+                    {
+                        dynamic users = JsonConvert.DeserializeObject(json);
+                        foreach (var user in users)
+                        {
+                            if (user["Role"].ToString() == "Student")
+                            {
+                                dgvAllStudents.Rows.Add(
+                                    user["UserId"],
+                                    user["Username"],
+                                    user["FullName"]
+                                );
+                            }
+                        }
+                    }
                 }
-
-                string studentId = dgvCourseStudents.Rows[e.RowIndex].Cells[0].Value.ToString();
-                string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
-                string studentName = dgvCourseStudents.Rows[e.RowIndex].Cells[1].Value.ToString();
-
-                if (MessageBox.Show($"Xóa sinh viên {studentName} khỏi môn học?", "Xác nhận",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                catch (Exception ex)
                 {
-                    // Gửi request xóa đăng ký
-                    string response = clientSocket.SendRequest($"DELETE_REGISTRATION|{studentId}|{courseId}");
-
-                    if (response.StartsWith("SUCCESS"))
-                    {
-                        MessageBox.Show("Đã xóa sinh viên khỏi môn học!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadCourseStudents(courseId);
-                        LoadCoursesData(); // Cập nhật số chỗ trống
-                    }
-                    else
-                    {
-                        MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    Console.WriteLine($"[ERROR] LoadAllStudentsData: {ex.Message}");
                 }
             }
         }
 
-        private void DgvUsers_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void DgvAllStudents_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
-            string userId = dgvUsers.Rows[e.RowIndex].Cells[0].Value.ToString();
-            string username = dgvUsers.Rows[e.RowIndex].Cells[1].Value.ToString();
-            string fullName = dgvUsers.Rows[e.RowIndex].Cells[2].Value.ToString();
+            string userId = dgvAllStudents.Rows[e.RowIndex].Cells[0].Value.ToString();
+            string username = dgvAllStudents.Rows[e.RowIndex].Cells[1].Value.ToString();
+            string fullName = dgvAllStudents.Rows[e.RowIndex].Cells[2].Value.ToString();
 
             // Nút Sửa thông tin
-            if (e.ColumnIndex == 3) // Cột "CHỈNH SỬA"
+            if (e.ColumnIndex == 3)
             {
                 using (var editForm = new Form())
                 {
@@ -641,7 +487,7 @@ namespace CourseRegistrationClient
                         if (response.StartsWith("SUCCESS"))
                         {
                             MessageBox.Show("Cập nhật thông tin thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadUsersData();
+                            LoadAllStudentsData();
                             editForm.DialogResult = DialogResult.OK;
                         }
                         else
@@ -656,7 +502,7 @@ namespace CourseRegistrationClient
                 }
             }
             // Nút Đổi mật khẩu
-            else if (e.ColumnIndex == 4) // Cột "MẬT KHẨU"
+            else if (e.ColumnIndex == 4)
             {
                 using (var passForm = new Form())
                 {
@@ -724,20 +570,195 @@ namespace CourseRegistrationClient
             }
         }
 
-        // ========== CÁC METHOD LOAD DATA ==========
+        // ========== CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ==========
 
-        private void LoadAllData()
+        private void BtnAddCoursePopup_Click(object sender, EventArgs e)
         {
-            LoadCoursesData();
-            LoadUsersData();
-            LoadRegistrationsData();
+            // Giữ nguyên code popup thêm môn học
+            using (var addCourseForm = new Form())
+            {
+                addCourseForm.Text = "Thêm môn học mới";
+                addCourseForm.Size = new Size(500, 350);
+                addCourseForm.StartPosition = FormStartPosition.CenterParent;
+                addCourseForm.Font = new Font("Microsoft Sans Serif", 10);
+
+                var lblId = new Label { Text = "Mã môn:", Location = new Point(30, 30), Size = new Size(100, 25) };
+                var txtId = new TextBox { Location = new Point(150, 30), Size = new Size(300, 25) };
+
+                var lblName = new Label { Text = "Tên môn:", Location = new Point(30, 70), Size = new Size(100, 25) };
+                var txtName = new TextBox { Location = new Point(150, 70), Size = new Size(300, 25) };
+
+                var lblCredits = new Label { Text = "Số tín chỉ:", Location = new Point(30, 110), Size = new Size(100, 25) };
+                var txtCredits = new TextBox { Location = new Point(150, 110), Size = new Size(100, 25) };
+
+                var lblSlots = new Label { Text = "Số chỗ trống:", Location = new Point(30, 150), Size = new Size(100, 25) };
+                var txtSlots = new TextBox { Location = new Point(150, 150), Size = new Size(100, 25) };
+
+                var btnSave = new Button
+                {
+                    Text = "LƯU MÔN HỌC",
+                    Location = new Point(150, 200),
+                    Size = new Size(150, 40),
+                    BackColor = Color.FromArgb(40, 167, 69),
+                    ForeColor = Color.White,
+                    Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
+                };
+
+                var btnCancel = new Button
+                {
+                    Text = "HỦY",
+                    Location = new Point(320, 200),
+                    Size = new Size(130, 40),
+                    BackColor = Color.FromArgb(108, 117, 125),
+                    ForeColor = Color.White
+                };
+
+                btnSave.Click += (s, ev) =>
+                {
+                    if (string.IsNullOrEmpty(txtId.Text) || string.IsNullOrEmpty(txtName.Text) ||
+                        string.IsNullOrEmpty(txtCredits.Text) || string.IsNullOrEmpty(txtSlots.Text))
+                    {
+                        MessageBox.Show("Vui lòng điền đầy đủ thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    string response = clientSocket.SendRequest($"ADD_COURSE|{txtId.Text.Trim()}|{txtName.Text.Trim()}|{txtCredits.Text.Trim()}|{txtSlots.Text.Trim()}");
+
+                    if (response.StartsWith("SUCCESS"))
+                    {
+                        MessageBox.Show("Thêm môn học thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadCoursesData();
+                        addCourseForm.DialogResult = DialogResult.OK;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                };
+
+                btnCancel.Click += (s, ev) => addCourseForm.Close();
+                addCourseForm.Controls.AddRange(new Control[] { lblId, txtId, lblName, txtName, lblCredits, txtCredits, lblSlots, txtSlots, btnSave, btnCancel });
+                addCourseForm.ShowDialog();
+            }
+        }
+
+        private void BtnAddUserPopup_Click(object sender, EventArgs e)
+        {
+            // Giữ nguyên code popup thêm sinh viên
+            using (var addUserForm = new Form())
+            {
+                addUserForm.Text = "Thêm sinh viên mới";
+                addUserForm.Size = new Size(500, 300);
+                addUserForm.StartPosition = FormStartPosition.CenterParent;
+                addUserForm.Font = new Font("Microsoft Sans Serif", 10);
+
+                var lblUser = new Label { Text = "Tài khoản:", Location = new Point(30, 30), Size = new Size(100, 25) };
+                var txtUser = new TextBox { Location = new Point(150, 30), Size = new Size(300, 25) };
+
+                var lblPass = new Label { Text = "Mật khẩu:", Location = new Point(30, 70), Size = new Size(100, 25) };
+                var txtPass = new TextBox { Location = new Point(150, 70), Size = new Size(300, 25), UseSystemPasswordChar = true };
+
+                var lblName = new Label { Text = "Họ tên:", Location = new Point(30, 110), Size = new Size(100, 25) };
+                var txtName = new TextBox { Location = new Point(150, 110), Size = new Size(300, 25) };
+
+                var btnSave = new Button
+                {
+                    Text = "LƯU SINH VIÊN",
+                    Location = new Point(150, 160),
+                    Size = new Size(150, 40),
+                    BackColor = Color.FromArgb(40, 167, 69),
+                    ForeColor = Color.White,
+                    Font = new Font("Microsoft Sans Serif", 10, FontStyle.Bold)
+                };
+
+                var btnCancel = new Button
+                {
+                    Text = "HỦY",
+                    Location = new Point(320, 160),
+                    Size = new Size(130, 40),
+                    BackColor = Color.FromArgb(108, 117, 125),
+                    ForeColor = Color.White
+                };
+
+                btnSave.Click += (s, ev) =>
+                {
+                    if (string.IsNullOrEmpty(txtUser.Text) || string.IsNullOrEmpty(txtPass.Text) || string.IsNullOrEmpty(txtName.Text))
+                    {
+                        MessageBox.Show("Vui lòng điền đầy đủ thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    string response = clientSocket.SendRequest($"REGISTER_USER|{txtUser.Text.Trim()}|{txtPass.Text.Trim()}|{txtName.Text.Trim()}");
+
+                    if (response.StartsWith("SUCCESS"))
+                    {
+                        MessageBox.Show("Thêm sinh viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (showingStudents)
+                            LoadAllStudentsData();
+                        addUserForm.DialogResult = DialogResult.OK;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                };
+
+                btnCancel.Click += (s, ev) => addUserForm.Close();
+                addUserForm.Controls.AddRange(new Control[] { lblUser, txtUser, lblPass, txtPass, lblName, txtName, btnSave, btnCancel });
+                addUserForm.ShowDialog();
+            }
+        }
+
+        private void DgvCourses_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvCourses.SelectedRows.Count > 0)
+            {
+                string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
+                LoadCourseStudents(courseId);
+            }
+        }
+
+        private void DgvCourseStudents_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 3 && e.RowIndex >= 0)
+            {
+                if (dgvCourses.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Vui lòng chọn môn học trước!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string studentId = dgvCourseStudents.Rows[e.RowIndex].Cells[0].Value.ToString();
+                string courseId = dgvCourses.SelectedRows[0].Cells[0].Value.ToString();
+                string studentName = dgvCourseStudents.Rows[e.RowIndex].Cells[1].Value.ToString();
+
+                if (MessageBox.Show($"Xóa sinh viên {studentName} khỏi môn học?", "Xác nhận",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    string response = clientSocket.SendRequest($"DELETE_REGISTRATION|{studentId}|{courseId}");
+
+                    if (response.StartsWith("SUCCESS"))
+                    {
+                        MessageBox.Show("Đã xóa sinh viên khỏi môn học!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadCourseStudents(courseId);
+                        LoadCoursesData();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi: " + response.Substring(6), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
 
         private void LoadCoursesData()
         {
             if (dgvCourses == null) return;
 
+            Console.WriteLine("[DEBUG] Sending VIEW_COURSES request...");
             string response = clientSocket.SendRequest("VIEW_COURSES");
+            Console.WriteLine($"[DEBUG] Server response: {response}");
+
             dgvCourses.Rows.Clear();
 
             if (response.StartsWith("SUCCESS"))
@@ -745,6 +766,7 @@ namespace CourseRegistrationClient
                 try
                 {
                     string json = response.Substring(8);
+                    Console.WriteLine($"[DEBUG] Courses JSON: {json}");
                     dynamic courses = JsonConvert.DeserializeObject(json);
                     foreach (var course in courses)
                     {
@@ -759,7 +781,12 @@ namespace CourseRegistrationClient
                 catch (Exception ex)
                 {
                     Console.WriteLine($"[ERROR] LoadCoursesData: {ex.Message}");
+                    Console.WriteLine($"[ERROR] StackTrace: {ex.StackTrace}");
                 }
+            }
+            else
+            {
+                Console.WriteLine($"[DEBUG] Server returned error: {response}");
             }
         }
 
@@ -769,8 +796,7 @@ namespace CourseRegistrationClient
 
             dgvCourseStudents.Rows.Clear();
 
-            // Lấy tất cả đăng ký
-            string response = clientSocket.ViewAllRegistrations();
+            string response = clientSocket.SendRequest("VIEW_ALL_REGISTRATIONS");
 
             if (response.StartsWith("SUCCESS"))
             {
@@ -779,12 +805,10 @@ namespace CourseRegistrationClient
                     string json = response.Substring(8);
                     dynamic registrations = JsonConvert.DeserializeObject(json);
 
-                    // Lọc sinh viên đăng ký môn này
                     foreach (var reg in registrations)
                     {
                         if (reg["CourseId"].ToString() == courseId)
                         {
-                            // Lấy thông tin sinh viên từ danh sách users
                             string usersResponse = clientSocket.SendRequest("GET_ALL_USERS");
                             if (usersResponse.StartsWith("SUCCESS"))
                             {
@@ -814,77 +838,7 @@ namespace CourseRegistrationClient
             }
         }
 
-        private void LoadUsersData()
-        {
-            if (dgvUsers == null) return;
-
-            string response = clientSocket.SendRequest("GET_ALL_USERS");
-            dgvUsers.Rows.Clear();
-
-            if (response.StartsWith("SUCCESS"))
-            {
-                try
-                {
-                    string json = response.Substring(8);
-                    if (json.Trim() != "[]")
-                    {
-                        dynamic users = JsonConvert.DeserializeObject(json);
-                        foreach (var user in users)
-                        {
-                            // Chỉ hiển thị sinh viên (role = "Student")
-                            if (user["Role"].ToString() == "Student")
-                            {
-                                dgvUsers.Rows.Add(
-                                    user["UserId"],
-                                    user["Username"],
-                                    user["FullName"]
-                                );
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[ERROR] LoadUsersData: {ex.Message}");
-                }
-            }
-        }
-
-        private void LoadRegistrationsData()
-        {
-            if (dgvRegistrations == null) return;
-
-            string response = clientSocket.ViewAllRegistrations();
-            dgvRegistrations.Rows.Clear();
-
-            if (response.StartsWith("SUCCESS"))
-            {
-                try
-                {
-                    string json = response.Substring(8);
-                    dynamic registrations = JsonConvert.DeserializeObject(json);
-                    foreach (var reg in registrations)
-                    {
-                        dgvRegistrations.Rows.Add(
-                            reg["RegistrationId"],
-                            reg["UserId"],
-                            reg["CourseId"],
-                            reg["CourseName"],
-                            reg["Credits"],
-                            reg["Semester"]
-                        );
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[ERROR] LoadRegistrationsData: {ex.Message}");
-                }
-            }
-        }
-
-        // ========== CÁC METHOD XÓA ĐÃ SỬA ==========
-
-        private void BtnDeleteCourse_Click(object sender, EventArgs e)  // ĐÃ SỬA: Thêm (object sender, EventArgs e)
+        private void BtnDeleteCourse_Click(object sender, EventArgs e)
         {
             if (dgvCourses.SelectedRows.Count == 0)
             {
@@ -903,7 +857,7 @@ namespace CourseRegistrationClient
                 {
                     MessageBox.Show("Đã xóa môn học thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadCoursesData();
-                    dgvCourseStudents.Rows.Clear(); // Xóa danh sách SV
+                    dgvCourseStudents.Rows.Clear();
                 }
                 else
                 {
@@ -912,16 +866,16 @@ namespace CourseRegistrationClient
             }
         }
 
-        private void BtnDeleteUser_Click(object sender, EventArgs e)  // ĐÃ SỬA: Thêm (object sender, EventArgs e)
+        private void BtnDeleteUser_Click(object sender, EventArgs e)
         {
-            if (dgvUsers.SelectedRows.Count == 0)
+            if (dgvAllStudents.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Vui lòng chọn sinh viên cần xóa", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            string userId = dgvUsers.SelectedRows[0].Cells[0].Value.ToString();
-            string userName = dgvUsers.SelectedRows[0].Cells[2].Value.ToString();
+            string userId = dgvAllStudents.SelectedRows[0].Cells[0].Value.ToString();
+            string userName = dgvAllStudents.SelectedRows[0].Cells[2].Value.ToString();
 
             if (MessageBox.Show($"Bạn có chắc chắn muốn xóa sinh viên:\n{userName}?",
                 "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
@@ -930,7 +884,7 @@ namespace CourseRegistrationClient
                 if (response.StartsWith("SUCCESS"))
                 {
                     MessageBox.Show("Đã xóa sinh viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadUsersData();
+                    LoadAllStudentsData();
                 }
                 else
                 {
