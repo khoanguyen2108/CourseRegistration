@@ -43,6 +43,7 @@ namespace CourseRegistrationServer
             }
         }
 
+        // ============ COURSE METHODS ============
         public List<Course> GetAllCourses()
         {
             try
@@ -111,12 +112,44 @@ namespace CourseRegistrationServer
 
                 course.AvailableSlots = newSlots;
                 SaveCourses(courses);
+                Console.WriteLine($"[FILE] ✅ UpdateAvailableSlots ({courseId}: {newSlots}) success");
                 return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[ERROR] UpdateAvailableSlots failed: {ex.Message}");
                 return false;
+            }
+        }
+
+        public void SaveAllCourses(List<Course> courses) // PHƯƠNG THỨC MỚI
+        {
+            try
+            {
+                SaveCourses(courses);
+                Console.WriteLine($"[FILE] ✅ SaveAllCourses: {courses.Count} courses saved");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] SaveAllCourses failed: {ex.Message}");
+            }
+        }
+
+        // ============ REGISTRATION METHODS ============
+        public List<Registration> GetAllRegistrations()
+        {
+            try
+            {
+                if (!File.Exists(registrationsFile))
+                    return new List<Registration>();
+
+                string json = File.ReadAllText(registrationsFile);
+                return JsonConvert.DeserializeObject<List<Registration>>(json) ?? new List<Registration>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] GetAllRegistrations failed: {ex.Message}");
+                return new List<Registration>();
             }
         }
 
@@ -141,12 +174,35 @@ namespace CourseRegistrationServer
                 var registrations = GetAllRegistrations();
                 registrations.Add(registration);
                 SaveRegistrations(registrations);
-                Console.WriteLine($"[FILE] ✅ AddRegistration success");
+                Console.WriteLine($"[FILE] ✅ AddRegistration ({registration.StudentId} -> {registration.CourseId}) success");
                 return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[ERROR] AddRegistration failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        public bool DeleteRegistration(string studentId, string courseId) // PHƯƠNG THỨC MỚI
+        {
+            try
+            {
+                var registrations = GetAllRegistrations();
+                var regToRemove = registrations.Find(r =>
+                    r.StudentId == studentId && r.CourseId == courseId);
+
+                if (regToRemove == null)
+                    return false;
+
+                registrations.Remove(regToRemove);
+                SaveRegistrations(registrations);
+                Console.WriteLine($"[FILE] ✅ DeleteRegistration ({studentId} -> {courseId}) success");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] DeleteRegistration failed: {ex.Message}");
                 return false;
             }
         }
@@ -165,23 +221,20 @@ namespace CourseRegistrationServer
             }
         }
 
-        private List<Registration> GetAllRegistrations()
+        public void SaveAllRegistrations(List<Registration> registrations) // PHƯƠNG THỨC MỚI
         {
             try
             {
-                if (!File.Exists(registrationsFile))
-                    return new List<Registration>();
-
-                string json = File.ReadAllText(registrationsFile);
-                return JsonConvert.DeserializeObject<List<Registration>>(json) ?? new List<Registration>();
+                SaveRegistrations(registrations);
+                Console.WriteLine($"[FILE] ✅ SaveAllRegistrations: {registrations.Count} registrations saved");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] GetAllRegistrations failed: {ex.Message}");
-                return new List<Registration>();
+                Console.WriteLine($"[ERROR] SaveAllRegistrations failed: {ex.Message}");
             }
         }
 
+        // ============ PRIVATE SAVE METHODS ============
         private void SaveCourses(List<Course> courses)
         {
             try

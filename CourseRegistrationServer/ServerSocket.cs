@@ -16,6 +16,7 @@ namespace CourseRegistrationServer
         private List<Course> courses;
         private List<Registration> registrations;
         private UserManager userManager;
+        private FileDataManager fileDataManager; // THÊM DÒNG NÀY
         private int port = 5000;
         private bool isRunning = false;
         private object lockObject = new object();
@@ -25,11 +26,43 @@ namespace CourseRegistrationServer
             courses = new List<Course>();
             registrations = new List<Registration>();
             userManager = new UserManager();
-            InitializeCourses();
-            Console.WriteLine("[SERVER] Courses initialized: " + courses.Count);
+            fileDataManager = new FileDataManager(); // THÊM DÒNG NÀY
+
+            // THAY ĐỔI: Load dữ liệu từ file
+            LoadDataFromFiles();
+
+            Console.WriteLine("[SERVER] Courses loaded: " + courses.Count);
+            Console.WriteLine("[SERVER] Registrations loaded: " + registrations.Count);
         }
 
-        private void InitializeCourses()
+        private void LoadDataFromFiles() // PHƯƠNG THỨC MỚI
+        {
+            try
+            {
+                // Load danh sách môn học từ file
+                courses = fileDataManager.GetAllCourses();
+
+                // Nếu file trống, khởi tạo dữ liệu mẫu
+                if (courses.Count == 0)
+                {
+                    InitializeSampleCourses();
+                    // Lưu dữ liệu mẫu vào file
+                    fileDataManager.SaveAllCourses(courses);
+                    Console.WriteLine("[SERVER] Đã tạo dữ liệu mẫu và lưu vào file");
+                }
+
+                // Load đăng ký từ file
+                registrations = fileDataManager.GetAllRegistrations();
+                Console.WriteLine($"[SERVER] Loaded {registrations.Count} registrations from file");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] LoadDataFromFiles failed: {ex.Message}");
+                InitializeSampleCourses();
+            }
+        }
+
+        private void InitializeSampleCourses() // ĐỔI TÊN TỪ InitializeCourses
         {
             courses.Clear();
             courses.Add(new Course("CTT101", "Lập trình C#", 3, 10));
@@ -37,8 +70,7 @@ namespace CourseRegistrationServer
             courses.Add(new Course("CTT103", "Cơ sở dữ liệu", 3, 4));
             courses.Add(new Course("CTT104", "Mạng máy tính", 3, 7));
             courses.Add(new Course("CTT105", "An ninh mạng", 3, 3));
-
-            Console.WriteLine("[SERVER] Đã khởi tạo " + courses.Count + " môn học");
+            Console.WriteLine("[SERVER] Đã khởi tạo dữ liệu mẫu");
         }
 
         public void Start()
@@ -48,7 +80,7 @@ namespace CourseRegistrationServer
                 tcpListener = new TcpListener(IPAddress.Any, port);
                 tcpListener.Start();
                 isRunning = true;
-                Console.WriteLine($"[SERVER] Đang lắng nghe trên cổng {port}.. .");
+                Console.WriteLine($"[SERVER] Đang lắng nghe trên cổng {port}...");
 
                 while (isRunning)
                 {
@@ -192,14 +224,12 @@ namespace CourseRegistrationServer
                         string updatePassword = parts[3].Trim();
                         return userManager.UpdateUser(updateUserId, updateFullName, updatePassword);
 
-                    // ============ THÊM CASE MỚI ============
                     case "DELETE_REGISTRATION":
                         if (parts.Length < 3)
                             return "ERROR|Định dạng sai";
                         string deleteRegStudentId = parts[1].Trim();
                         string deleteRegCourseId = parts[2].Trim();
                         return DeleteRegistration(deleteRegStudentId, deleteRegCourseId);
-                    // =======================================
 
                     default:
                         return "ERROR|Lệnh không tồn tại: " + command;
@@ -245,7 +275,14 @@ namespace CourseRegistrationServer
                 reg.CourseName = course.CourseName;
                 reg.Status = "Success";
                 registrations.Add(reg);
+
+                // LƯU VÀO FILE: Đăng ký mới
+                fileDataManager.AddRegistration(reg);
+
+                // Cập nhật số chỗ trống
                 course.AvailableSlots--;
+                // LƯU VÀO FILE: Cập nhật số chỗ trống
+                fileDataManager.UpdateAvailableSlots(courseId, course.AvailableSlots);
 
                 Console.WriteLine($"[SERVER] {studentId} đã đăng ký {courseId} thành công");
                 return "SUCCESS|Đăng ký thành công! ";
@@ -310,6 +347,9 @@ namespace CourseRegistrationServer
                 Course newCourse = new Course(courseId, courseName, credits, availableSlots);
                 courses.Add(newCourse);
 
+                // LƯU VÀO FILE: Thêm môn mới
+                fileDataManager.AddCourse(newCourse);
+
                 Console.WriteLine($"[SERVER] ✅ Đã thêm môn: {courseId}");
                 return "SUCCESS|Thêm môn thành công! ";
             }
@@ -333,12 +373,28 @@ namespace CourseRegistrationServer
                 // Xóa môn
                 courses.Remove(courseToDelete);
 
+                // LƯU VÀO FILE: Xóa môn
+                fileDataManager.DeleteCourse(courseId);
+
+                // Xóa tất cả đăng ký liên quan đến môn này
+                var regsToRemove = registrations.Where(r => r.CourseId == courseId).ToList();
+                foreach (var reg in regsToRemove)
+                {
+                    registrations.Remove(reg);
+                }
+
+                if (regsToRemove.Count > 0)
+                {
+                    // LƯU VÀO FILE: Cập nhật danh sách đăng ký
+                    fileDataManager.SaveAllRegistrations(registrations);
+                    Console.WriteLine($"[SERVER] Đã xóa {regsToRemove.Count} đăng ký liên quan");
+                }
+
                 Console.WriteLine($"[SERVER] ✅ Đã xóa môn: {courseId}");
                 return "SUCCESS|Xóa môn thành công!";
             }
         }
 
-        // ============ THÊM PHƯƠNG THỨC MỚI ============
         private string DeleteRegistration(string studentId, string courseId)
         {
             lock (lockObject)
@@ -358,11 +414,16 @@ namespace CourseRegistrationServer
                 // Xóa đăng ký
                 registrations.Remove(regToDelete);
 
+                // LƯU VÀO FILE: Lưu lại toàn bộ danh sách đăng ký
+                fileDataManager.SaveAllRegistrations(registrations);
+
                 // Tăng số chỗ trống của môn học
                 Course course = courses.FirstOrDefault(c => c.CourseId == courseId);
                 if (course != null)
                 {
                     course.AvailableSlots++;
+                    // LƯU VÀO FILE: Cập nhật số chỗ trống
+                    fileDataManager.UpdateAvailableSlots(courseId, course.AvailableSlots);
                     Console.WriteLine($"[SERVER] Tăng chỗ trống môn {courseId} lên {course.AvailableSlots}");
                 }
 
@@ -370,7 +431,6 @@ namespace CourseRegistrationServer
                 return "SUCCESS|Đã xóa sinh viên khỏi môn học";
             }
         }
-        // =============================================
 
         private string GetAllUsers()
         {
@@ -389,6 +449,7 @@ namespace CourseRegistrationServer
         {
             isRunning = false;
             tcpListener?.Stop();
+            Console.WriteLine("[SERVER] Đã dừng server");
         }
     }
 }

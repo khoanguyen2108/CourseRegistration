@@ -1,0 +1,50 @@
+[
+  {
+    "CourseId": "CTT101",
+    "CourseName": "Lập trình C#",
+    "Credits": 3,
+    "AvailableSlots": 9
+  },
+  {
+    "CourseId": "CTT102",
+    "CourseName": "Lập trình Web",
+    "Credits": 3,
+    "AvailableSlots": 4
+  },
+  {
+    "CourseId": "CTT103",
+    "CourseName": "Cơ sở dữ liệu",
+    "Credits": 3,
+    "AvailableSlots": 3
+  },
+  {
+    "CourseId": "CTT104",
+    "CourseName": "Mạng máy tính",
+    "Credits": 3,
+    "AvailableSlots": 6
+  },
+  {
+    "CourseId": "CTT105",
+    "CourseName": "An ninh mạng",
+    "Credits": 3,
+    "AvailableSlots": 2
+  },
+  {
+    "CourseId": "CTT106",
+    "CourseName": "Lập trình mạng",
+    "Credits": 3,
+    "AvailableSlots": 14
+  },
+  {
+    "CourseId": "CTT107",
+    "CourseName": "Nhập môn lập trình",
+    "Credits": 2,
+    "AvailableSlots": 23
+  },
+  {
+    "CourseId": "CTT108",
+    "CourseName": "Triết học Mác Lênin",
+    "Credits": 2,
+    "AvailableSlots": 12
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "StudentId": "SV488867",
+    "CourseId": "CTT102",
+    "CourseName": "Lập trình Web",
+    "RegistrationDate": "2025-12-14T00:50:01.9046945+07:00",
+    "RegisteredAt": "2025-12-14T00:50:01.9046945+07:00",
+    "Status": "Success"
+  },
+  {
+    "StudentId": "SV488867",
+    "CourseId": "CTT101",
+    "CourseName": "Lập trình C#",
+    "RegistrationDate": "2025-12-14T00:50:54.80868+07:00",
+    "RegisteredAt": "2025-12-14T00:50:54.80868+07:00",
+    "Status": "Success"
+  },
+  {
+    "StudentId": "SV488867",
+    "CourseId": "CTT103",
+    "CourseName": "Cơ sở dữ liệu",
+    "RegistrationDate": "2025-12-14T00:50:57.6550586+07:00",
+    "RegisteredAt": "2025-12-14T00:50:57.6550586+07:00",
+    "Status": "Success"
+  },
+  {
+    "StudentId": "SV488867",
+    "CourseId": "CTT104",
+    "CourseName": "Mạng máy tính",
+    "RegistrationDate": "2025-12-14T00:51:00.4869634+07:00",
+    "RegisteredAt": "2025-12-14T00:51:00.4869634+07:00",
+    "Status": "Success"
+  },
+  {
+    "StudentId": "SV488867",
+    "CourseId": "CTT105",
+    "CourseName": "An ninh mạng",
+    "RegistrationDate": "2025-12-14T00:51:02.5264472+07:00",
+    "RegisteredAt": "2025-12-14T00:51:02.5264472+07:00",
+    "Status": "Success"
+  },
+  {
+    "StudentId": "SV488867",
+    "CourseId": "CTT106",
+    "CourseName": "Lập trình mạng",
+    "RegistrationDate": "2025-12-14T00:51:05.07159+07:00",
+    "RegisteredAt": "2025-12-14T00:51:05.07159+07:00",
+    "Status": "Success"
+  }
+]

@@ -16,14 +16,6 @@
     "CreatedAt": "2025-12-09T07:48:01.5489473+07:00"
   },
   {
-    "UserId": "SV679710",
-    "Username": "123456",
-    "Password": "123456",
-    "Role": "Student",
-    "FullName": "1",
-    "CreatedAt": "2025-12-09T07:56:48.4689668+07:00"
-  },
-  {
     "UserId": "SV478170",
     "Username": "khoa",
     "Password": "123456",
@@ -46,5 +38,21 @@
     "Role": "Student",
     "FullName": "Lê Phước Nam",
     "CreatedAt": "2025-12-12T23:22:36.8529041+07:00"
+  },
+  {
+    "UserId": "SV061033",
+    "Username": "nguyenvana",
+    "Password": "123456",
+    "Role": "Student",
+    "FullName": "Nguyễn Văn A",
+    "CreatedAt": "2025-12-14T00:55:39.4061033+07:00"
+  },
+  {
+    "UserId": "SV891365",
+    "Username": "nguyenvanb",
+    "Password": "123456",
+    "Role": "Student",
+    "FullName": "Nguyễn Văn B",
+    "CreatedAt": "2025-12-14T00:56:07.7891365+07:00"
   }
 ]
