@@ -9,13 +9,13 @@
     "CourseId": "CTT102",
     "CourseName": "Lập trình Web",
     "Credits": 3,
-    "AvailableSlots": 4
+    "AvailableSlots": 5
   },
   {
     "CourseId": "CTT103",
     "CourseName": "Cơ sở dữ liệu",
     "Credits": 3,
-    "AvailableSlots": 3
+    "AvailableSlots": 2
   },
   {
     "CourseId": "CTT104",
@@ -27,19 +27,19 @@
     "CourseId": "CTT105",
     "CourseName": "An ninh mạng",
     "Credits": 3,
-    "AvailableSlots": 2
+    "AvailableSlots": 0
   },
   {
     "CourseId": "CTT106",
     "CourseName": "Lập trình mạng",
     "Credits": 3,
-    "AvailableSlots": 14
+    "AvailableSlots": 13
   },
   {
     "CourseId": "CTT107",
     "CourseName": "Nhập môn lập trình",
     "Credits": 2,
-    "AvailableSlots": 23
+    "AvailableSlots": 22
   },
   {
     "CourseId": "CTT108",
